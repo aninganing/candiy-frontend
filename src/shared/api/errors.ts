@@ -1,7 +1,4 @@
-/**
- * 공통 에러 형태. CANDiY 응답 에러({status:"error", code, message})와
- * 우리 자체 Route Handler 에러를 동일한 형태로 정규화해서 features 레이어에 전달한다.
- */
+// CANDiY 에러 응답과 그 외 실패를 동일한 형태로 정규화해 features 레이어에 전달한다.
 export class ApiError extends Error {
   readonly code?: string;
   readonly httpStatus?: number;
@@ -14,7 +11,7 @@ export class ApiError extends Error {
   }
 }
 
-/** CANDiY API의 원본 에러 응답 형태 (오류코드 문서 기준: AT-xxx/AE-xxx/VE-xxx/SE-xxx/TE-xxx 등) */
+// CANDiY 오류코드 문서 기준 원본 에러 응답 형태 (AT-xxx/AE-xxx/VE-xxx/SE-xxx/TE-xxx 등)
 export interface CandiyErrorPayload {
   status: 'error';
   message: string;
