@@ -18,14 +18,17 @@
   --success: #16a34a;
   --success-bg: #dcfce7;
   --success-fg: #166534;
+  --success-foreground: #ffffff;
 
   --warning: #ea580c;
   --warning-bg: #ffedd5;
   --warning-fg: #9a3412;
+  --warning-foreground: #ffffff;
 
   --danger: #dc2626;
   --danger-bg: #fee2e2;
   --danger-fg: #991b1b;
+  --danger-foreground: #ffffff;
 
   --shadow-card: 0 1px 2px 0 rgb(15 23 42 / 0.06), 0 2px 8px 0 rgb(15 23 42 / 0.06);
 }
@@ -49,14 +52,17 @@
     --success: #22c55e;
     --success-bg: #14532d;
     --success-fg: #86efac;
+    --success-foreground: #ffffff;
 
     --warning: #f97316;
     --warning-bg: #7c2d12;
     --warning-fg: #fdba74;
+    --warning-foreground: #ffffff;
 
     --danger: #ef4444;
     --danger-bg: #7f1d1d;
     --danger-fg: #fca5a5;
+    --danger-foreground: #ffffff;
 
     --shadow-card: none;
   }
@@ -80,14 +86,17 @@
   --color-success: var(--success);
   --color-success-bg: var(--success-bg);
   --color-success-fg: var(--success-fg);
+  --color-success-foreground: var(--success-foreground);
 
   --color-warning: var(--warning);
   --color-warning-bg: var(--warning-bg);
   --color-warning-fg: var(--warning-fg);
+  --color-warning-foreground: var(--warning-foreground);
 
   --color-danger: var(--danger);
   --color-danger-bg: var(--danger-bg);
   --color-danger-fg: var(--danger-fg);
+  --color-danger-foreground: var(--danger-foreground);
 
   --color-ring: var(--primary);
 
