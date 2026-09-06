@@ -1,11 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { Card } from '@/shared/components/ui/Card';
 import { Header } from '@/shared/components/layout/Header';
 import { EmptyState } from '@/shared/components/feedback/EmptyState';
 import { Spinner } from '@/shared/components/feedback/Spinner';
 import { useCheckupData } from '@/features/checkups/hooks/useCheckupData';
+import { PatientSummaryCard } from './PatientSummaryCard';
 import type { CheckupData, CheckupOverview } from '@/features/checkups/types/checkup.types';
 
 function getLatestOverview(data: CheckupData): CheckupOverview | undefined {
@@ -29,15 +29,7 @@ export function Dashboard() {
         {isRestoring ? (
           <Spinner size="lg" label="검진 결과 불러오는 중" />
         ) : data && latestOverview ? (
-          <Card padding="lg" className="flex w-full max-w-lg flex-col gap-3">
-            <span className="text-foreground-subtle text-xs">최근 검진일</span>
-            <h1 className="text-foreground text-lg font-bold tracking-tight">
-              {latestOverview.checkupDate}
-            </h1>
-            <p className="text-foreground-muted text-sm leading-relaxed">
-              {data.patientName}님의 검진 개요·상세 항목·과거 이력 화면은 준비 중입니다.
-            </p>
-          </Card>
+          <PatientSummaryCard patientName={data.patientName} overview={latestOverview} />
         ) : (
           <EmptyState
             title="아직 조회된 검진 결과가 없습니다"
