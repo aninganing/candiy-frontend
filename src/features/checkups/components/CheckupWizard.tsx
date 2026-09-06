@@ -1,13 +1,15 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { Header } from '@/shared/components/layout/Header';
 import { useCheckupWizard } from '@/features/checkups/hooks/useCheckupWizard';
 import { CheckupForm } from './CheckupForm';
 import { CheckupIntro } from './CheckupIntro';
 import { CheckupPending } from './CheckupPending';
-import { CheckupSuccess } from './CheckupSuccess';
+import { CheckupSuccess, getLatestCheckupDate } from './CheckupSuccess';
 
 export function CheckupWizard() {
+  const router = useRouter();
   const {
     state,
     start,
@@ -54,7 +56,11 @@ export function CheckupWizard() {
 
         {state.step === 'success' && (
           <div className="flex flex-1 items-center justify-center px-6 py-10">
-            <CheckupSuccess data={state.data} onConfirm={reset} onReset={reset} />
+            <CheckupSuccess
+              data={state.data}
+              onConfirm={() => router.push(`/checkups/${getLatestCheckupDate(state.data)}`)}
+              onReset={reset}
+            />
           </div>
         )}
       </main>

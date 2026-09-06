@@ -10,7 +10,7 @@ export interface CheckupSuccessProps {
   onReset: () => void;
 }
 
-function getLatestCheckupDate(data: CheckupData): string {
+export function getLatestCheckupDate(data: CheckupData): string {
   const dates = data.overviews.map((overview) => overview.checkupDate);
   if (dates.length === 0) return '-';
   return [...dates].sort().at(-1) ?? '-';

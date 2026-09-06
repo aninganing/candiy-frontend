@@ -1,12 +1,18 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { useCheckupWizardStore } from '@/features/checkups/store/checkupWizard.store';
 import { CheckupWizard } from './CheckupWizard';
 
+const push = vi.fn();
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push }),
+}));
+
 afterEach(() => {
   useCheckupWizardStore.setState({ state: { step: 'idle' } });
+  push.mockClear();
 });
 
 function renderWizard() {
@@ -47,5 +53,9 @@ describe('CheckupWizard', () => {
     await userEvent.click(screen.getByRole('button', { name: '인증 완료' }));
 
     expect(await screen.findByText(/홍길동님의 건강검진 조회가/)).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: '확인' }));
+
+    expect(push).toHaveBeenCalledWith(expect.stringMatching(/^\/checkups\/.+/));
   });
 });
