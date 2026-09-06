@@ -41,7 +41,8 @@ describe('CheckupForm', () => {
       }),
     );
     const [submitted] = onSubmit.mock.calls[0] as [{ startDate: string; endDate: string }];
-    expect(Number(submitted.endDate) - Number(submitted.startDate)).toBe(1);
+    // "최근 10년간" 안내 문구(CheckupSuccess)와 맞춘 범위 — 올해 포함 10년.
+    expect(Number(submitted.endDate) - Number(submitted.startDate)).toBe(9);
   });
 
   it('간편인증 수단과 통신사를 선택할 수 있다', async () => {

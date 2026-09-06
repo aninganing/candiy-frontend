@@ -39,13 +39,14 @@ export function CheckupForm({
     if (!isValid) return;
 
     const currentYear = new Date().getFullYear();
+    // 최근 10년(올해 포함)을 조회한다 — CheckupSuccess의 "최근 10년간" 안내 문구와 맞춘 범위.
     onSubmit({
       legalName,
       birthdate,
       phoneNo,
       telecom,
       loginTypeLevel,
-      startDate: String(currentYear - 1),
+      startDate: String(currentYear - 9),
       endDate: String(currentYear),
     });
   }
