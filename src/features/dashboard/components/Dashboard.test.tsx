@@ -23,8 +23,8 @@ describe('Dashboard', () => {
     renderDashboard(true);
 
     expect(screen.getByText('홍길동님')).toBeInTheDocument();
-    expect(screen.getByText(/2024-05-10/)).toBeInTheDocument();
-    expect(screen.getByText('정A')).toBeInTheDocument();
+    expect(screen.getByText('2024-05-10 검진')).toBeInTheDocument();
+    expect(screen.getByText('전체 검진 이력')).toBeInTheDocument();
   });
 
   it('캐시에 데이터가 없으면 안내 문구와 조회 링크를 표시한다', () => {

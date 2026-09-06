@@ -12,6 +12,7 @@ import { PatientSummaryCard } from './PatientSummaryCard';
 import { MetricGaugeGrid } from './MetricGaugeGrid';
 import { MetricTrendList } from './MetricTrendList';
 import { LipidPanelChart } from './LipidPanelChart';
+import { HistoryPanel } from './HistoryPanel';
 import type { CheckupData, CheckupOverview } from '@/features/checkups/types/checkup.types';
 
 function getLatestOverview(data: CheckupData): CheckupOverview | undefined {
@@ -40,6 +41,7 @@ export function Dashboard() {
             <MetricGaugeGrid metrics={toGaugeMetrics(latestOverview, data.references)} />
             <MetricTrendList metrics={toTrendMetrics(data)} />
             <LipidPanelChart data={toLipidPanel(data)} />
+            <HistoryPanel overviews={data.overviews} references={data.references} />
           </>
         ) : (
           <EmptyState

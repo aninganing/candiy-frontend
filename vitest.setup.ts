@@ -25,6 +25,14 @@ if (typeof window.requestAnimationFrame !== 'function') {
   window.cancelAnimationFrame = (handle: number) => window.clearTimeout(handle);
 }
 
+if (typeof window.ResizeObserver !== 'function') {
+  window.ResizeObserver = class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  };
+}
+
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterEach(() => {
   cleanup();

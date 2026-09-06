@@ -22,3 +22,68 @@ export const GAUGE_METRICS: GaugeMetricConfig[] = [
   { key: 'alt', label: 'ALT', unit: 'U/L', min: 0, max: 80 },
   { key: 'serumCreatinine', label: '혈청크레아티닌', unit: 'mg/dL', min: 0, max: 3 },
 ];
+
+export interface HistoryFieldConfig {
+  key: keyof CheckupOverview;
+  label: string;
+}
+
+export interface HistorySectionConfig {
+  title: string;
+  fields: HistoryFieldConfig[];
+}
+
+// 검진 이력 상세에서 CheckupOverview의 22개 항목 전체를 보여줄 때 쓰는 그룹핑.
+export const HISTORY_SECTIONS: HistorySectionConfig[] = [
+  {
+    title: '신체계측',
+    fields: [
+      { key: 'height', label: '신장' },
+      { key: 'weight', label: '체중' },
+      { key: 'waist', label: '허리둘레' },
+      { key: 'bmi', label: 'BMI' },
+    ],
+  },
+  {
+    title: '시청각',
+    fields: [
+      { key: 'vision', label: '시력' },
+      { key: 'hearing', label: '청력' },
+    ],
+  },
+  {
+    title: '순환기',
+    fields: [{ key: 'bloodPressure', label: '혈압' }],
+  },
+  {
+    title: '요검사',
+    fields: [{ key: 'proteinuria', label: '요단백' }],
+  },
+  {
+    title: '혈액검사',
+    fields: [
+      { key: 'hemoglobin', label: '혈색소' },
+      { key: 'fastingBloodGlucose', label: '공복혈당' },
+      { key: 'totalCholesterol', label: '총콜레스테롤' },
+      { key: 'hdlCholesterol', label: 'HDL콜레스테롤' },
+      { key: 'triglyceride', label: '중성지방' },
+      { key: 'ldlCholesterol', label: 'LDL콜레스테롤' },
+      { key: 'serumCreatinine', label: '혈청크레아티닌' },
+      { key: 'gfr', label: 'GFR' },
+      { key: 'ast', label: 'AST' },
+      { key: 'alt', label: 'ALT' },
+      { key: 'ygpt', label: '감마지티피(γ-GTP)' },
+    ],
+  },
+  {
+    title: '영상 · 골밀도',
+    fields: [
+      { key: 'chestXrayResult', label: '흉부촬영' },
+      { key: 'osteoporosis', label: '골밀도' },
+    ],
+  },
+  {
+    title: '종합소견',
+    fields: [{ key: 'evaluation', label: '종합판정' }],
+  },
+];
