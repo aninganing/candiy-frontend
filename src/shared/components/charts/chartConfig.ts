@@ -37,5 +37,13 @@ declare module 'chart.js' {
     lineReference?:
       | { kind: 'band'; low: number; high: number; bandColor: string; lineColor: string }
       | { kind: 'line'; boundary: number; lineColor: string };
+    barThreshold?: {
+      value: number;
+      label?: string;
+      lineColor: string;
+    };
+    barValueLabels?: {
+      color: string;
+    };
   }
 }
