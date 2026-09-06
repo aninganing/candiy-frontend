@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { ArrowRight, CircleCheck } from 'lucide-react';
 import { Button } from './Button';
 
 const VARIANTS = [
@@ -182,18 +183,9 @@ export const FullWidth: Story = {
   },
 };
 
-const CHECK_ICON = (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M8.5 12.2l2.4 2.4 4.8-5" strokeLinecap="round" strokeLinejoin="round" />
-    <circle cx="12" cy="12" r="9" />
-  </svg>
-);
+const CHECK_ICON = <CircleCheck size={16} />;
 
-const ARROW_ICON = (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
+const ARROW_ICON = <ArrowRight size={16} />;
 
 export const WithIcon: Story = {
   args: { icon: CHECK_ICON },

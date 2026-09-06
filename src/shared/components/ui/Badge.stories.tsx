@@ -1,25 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { CircleCheck, Clock } from 'lucide-react';
 import { Badge } from './Badge';
-
-const CHECK_ICON = (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M8.5 12.2l2.4 2.4 4.8-5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const CLOCK_ICON = (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="12" cy="12" r="9" />
-    <path d="M12 7v5l3.5 2" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const PILL_CHECK_ICON = (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="12" cy="12" r="9" />
-    <path d="M8.5 12.2l2.4 2.4 4.8-5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
 
 const meta = {
   title: 'ui/Badge',
@@ -75,14 +56,22 @@ export const PillTones: Story = {
 };
 
 export const PillWithIcon: Story = {
-  args: { tone: 'success', children: <>{PILL_CHECK_ICON}정상</> },
+  args: {
+    tone: 'success',
+    children: (
+      <>
+        <CircleCheck size={16} />
+        정상
+      </>
+    ),
+  },
   parameters: {
     docs: { description: { story: '아이콘과 텍스트를 함께 넣을 수 있습니다.' } },
   },
 };
 
 export const CirclePrimary: Story = {
-  args: { shape: 'circle', tone: 'primary', size: 'lg', children: CLOCK_ICON },
+  args: { shape: 'circle', tone: 'primary', size: 'lg', children: <Clock /> },
   parameters: {
     docs: {
       description: {
@@ -93,7 +82,7 @@ export const CirclePrimary: Story = {
 };
 
 export const CircleSuccess: Story = {
-  args: { shape: 'circle', tone: 'success', size: 'lg', children: CHECK_ICON },
+  args: { shape: 'circle', tone: 'success', size: 'lg', children: <CircleCheck /> },
   parameters: {
     docs: { description: { story: '조회 완료 화면의 성공 아이콘입니다.' } },
   },
@@ -106,13 +95,13 @@ export const Sizes: Story = {
   render: () => (
     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
       <Badge shape="circle" tone="primary" size="sm">
-        {CHECK_ICON}
+        <CircleCheck />
       </Badge>
       <Badge shape="circle" tone="primary" size="md">
-        {CHECK_ICON}
+        <CircleCheck />
       </Badge>
       <Badge shape="circle" tone="primary" size="lg">
-        {CHECK_ICON}
+        <CircleCheck />
       </Badge>
     </div>
   ),
@@ -124,19 +113,7 @@ export const CustomIconSize: Story = {
     tone: 'primary',
     size: 'lg',
     autoSizeIcon: false,
-    children: (
-      <svg
-        width="40"
-        height="40"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <circle cx="12" cy="12" r="9" />
-        <path d="M12 7v5l3.5 2" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
+    children: <Clock size={40} />,
   },
   parameters: {
     docs: {

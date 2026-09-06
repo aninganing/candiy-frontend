@@ -1,5 +1,6 @@
 'use client';
 
+import { Clock } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Badge } from '@/shared/components/ui/Badge';
 import { Button } from '@/shared/components/ui/Button';
@@ -9,12 +10,7 @@ import { getAuthMethodLabel } from '@/features/checkups/constants/checkupOptions
 import { AUTH_EXPIRY_SECONDS } from '@/features/checkups/constants/checkupTimings';
 import type { LoginTypeLevel } from '@/features/checkups/types/checkup.types';
 
-const CLOCK_ICON = (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="12" cy="12" r="9" />
-    <path d="M12 7v5l3.5 2" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
+const CLOCK_ICON = <Clock />;
 
 function formatRemaining(totalSeconds: number) {
   const minutes = Math.floor(totalSeconds / 60);

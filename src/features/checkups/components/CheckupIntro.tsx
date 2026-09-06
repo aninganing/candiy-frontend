@@ -1,3 +1,4 @@
+import { ShieldCheck } from 'lucide-react';
 import { Button } from '@/shared/components/ui/Button';
 
 export interface CheckupIntroProps {
@@ -8,22 +9,7 @@ export function CheckupIntro({ onStart }: CheckupIntroProps) {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-6 px-6 py-10 text-center">
       <div className="bg-primary/10 flex h-18 w-18 items-center justify-center rounded-full">
-        <svg
-          width="34"
-          height="34"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          className="text-primary"
-        >
-          <path
-            d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path d="M9 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+        <ShieldCheck size={34} className="text-primary" />
       </div>
       <div className="flex flex-col gap-2.5">
         <h1 className="text-foreground text-xl font-bold tracking-tight">
