@@ -1,21 +1,34 @@
 import { IsRestoringProvider, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { toCheckupData } from '@/features/checkups/mappers/checkup.mapper';
 import { checkupDataFixture } from '@/shared/mocks/fixtures/checkup.fixtures';
 import { queryKeys } from '@/shared/api/queryKeys';
+import { useCheckupWizardStore } from '@/features/checkups/store/checkupWizard.store';
 import { Dashboard } from './Dashboard';
+
+const push = vi.fn();
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push }),
+}));
+
+afterEach(() => {
+  useCheckupWizardStore.setState({ state: { step: 'idle' } });
+  push.mockClear();
+});
 
 function renderDashboard(seeded: boolean) {
   const queryClient = new QueryClient();
   if (seeded) {
     queryClient.setQueryData(queryKeys.checkups.data(), toCheckupData(checkupDataFixture));
   }
-  return render(
+  render(
     <QueryClientProvider client={queryClient}>
       <Dashboard />
     </QueryClientProvider>,
   );
+  return queryClient;
 }
 
 describe('Dashboard', () => {
@@ -50,5 +63,14 @@ describe('Dashboard', () => {
 
     expect(screen.getByRole('status')).toBeInTheDocument();
     expect(screen.queryByText('아직 조회된 검진 결과가 없습니다')).not.toBeInTheDocument();
+  });
+
+  it('다시 검사하기를 누르면 캐시를 지우고 /checkups로 이동한다', async () => {
+    const queryClient = renderDashboard(true);
+
+    await userEvent.click(screen.getByRole('button', { name: '다시 검사하기' }));
+
+    expect(queryClient.getQueryData(queryKeys.checkups.data())).toBeUndefined();
+    expect(push).toHaveBeenCalledWith('/checkups');
   });
 });
