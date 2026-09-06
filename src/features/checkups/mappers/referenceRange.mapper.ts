@@ -32,8 +32,38 @@ export function parseReferenceBound(text: string | undefined): ReferenceBound | 
   return null;
 }
 
+const CONNECTOR = /\s*(이며|또는)\s*$/;
+
+// 혈압처럼 "수축기/이완기"가 "/"로 묶인 값의 앞/뒤 조각을 분리한다. "120미만 이며/80미만"처럼
+// 조각 사이에 붙는 접속어(이며/또는)는 참고치 파싱 전에 제거한다.
+function splitCompound(text: string): [string, string] | null {
+  const parts = text.split('/');
+  if (parts.length !== 2) return null;
+  return [parts[0].replace(CONNECTOR, '').trim(), parts[1].replace(CONNECTOR, '').trim()];
+}
+
+export function parseCompoundReferenceBound(
+  text: string | undefined,
+): [ReferenceBound | null, ReferenceBound | null] {
+  if (!text) return [null, null];
+  const parts = splitCompound(text);
+  if (!parts) return [null, null];
+  return [parseReferenceBound(parts[0]), parseReferenceBound(parts[1])];
+}
+
+export function parseCompoundValue(text: string): [number, number] | null {
+  const parts = splitCompound(text);
+  if (!parts) return null;
+  const [first, second] = parts.map(Number);
+  if (Number.isNaN(first) || Number.isNaN(second)) return null;
+  return [first, second];
+}
+
 function isWithinBound(value: number, bound: ReferenceBound): boolean {
-  return (bound.min === undefined || value >= bound.min) && (bound.max === undefined || value <= bound.max);
+  return (
+    (bound.min === undefined || value >= bound.min) &&
+    (bound.max === undefined || value <= bound.max)
+  );
 }
 
 export type MetricStatus = 'normal' | 'warning' | 'danger';

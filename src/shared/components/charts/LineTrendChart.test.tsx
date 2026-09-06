@@ -71,6 +71,26 @@ describe('LineTrendChart', () => {
     });
   });
 
+  it('line 참고치에 riskBoundary가 있으면 위험색과 함께 전달하고 y축 스케일에도 반영한다', () => {
+    render(
+      <LineTrendChart
+        values={[124, 118]}
+        categories={["'23", "'24"]}
+        status="normal"
+        reference={{ kind: 'line', boundary: 120, riskBoundary: 140 }}
+      />,
+    );
+
+    const props = lastLineProps();
+    expect(props.options.plugins?.lineReference).toMatchObject({
+      kind: 'line',
+      boundary: 120,
+      riskBoundary: 140,
+    });
+    const { max } = props.options.scales?.y as { max: number };
+    expect(max).toBeGreaterThan(140);
+  });
+
   it('status별로 다른 선 색상을 지정한다', () => {
     render(
       <LineTrendChart

@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { classifyMetricStatus, parseReferenceBound, pickGaugeBoundary } from './referenceRange.mapper';
+import {
+  classifyMetricStatus,
+  parseCompoundReferenceBound,
+  parseCompoundValue,
+  parseReferenceBound,
+  pickGaugeBoundary,
+} from './referenceRange.mapper';
 
 describe('parseReferenceBound', () => {
   it('범위 패턴을 파싱한다', () => {
@@ -20,6 +26,30 @@ describe('parseReferenceBound', () => {
 
   it('빈 값이면 null을 반환한다', () => {
     expect(parseReferenceBound(undefined)).toBeNull();
+  });
+});
+
+describe('parseCompoundReferenceBound', () => {
+  it('접속어(이며/또는)를 제거하고 "/"로 묶인 값을 각각 파싱한다', () => {
+    expect(parseCompoundReferenceBound('120미만 이며/80미만')).toEqual([{ max: 120 }, { max: 80 }]);
+    expect(parseCompoundReferenceBound('140이상 또는 /90이상')).toEqual([
+      { min: 140 },
+      { min: 90 },
+    ]);
+  });
+
+  it('빈 값이면 [null, null]을 반환한다', () => {
+    expect(parseCompoundReferenceBound(undefined)).toEqual([null, null]);
+  });
+});
+
+describe('parseCompoundValue', () => {
+  it('"/"로 묶인 실측값을 두 숫자로 분리한다', () => {
+    expect(parseCompoundValue('118/76')).toEqual([118, 76]);
+  });
+
+  it('숫자로 파싱할 수 없으면 null을 반환한다', () => {
+    expect(parseCompoundValue('118')).toBeNull();
   });
 });
 

@@ -13,7 +13,8 @@ import {
 import { cn } from '@/shared/lib/cn';
 
 export type LineTrendReference =
-  { kind: 'band'; low: number; high: number } | { kind: 'line'; boundary: number };
+  | { kind: 'band'; low: number; high: number }
+  | { kind: 'line'; boundary: number; riskBoundary?: number };
 
 export interface LineTrendChartProps {
   values: number[];
@@ -58,16 +59,23 @@ const lineReferencePlugin: Plugin<'line'> = {
     }
 
     if (opts.kind === 'line' && typeof opts.boundary === 'number' && opts.lineColor) {
-      const y = scales.y.getPixelForValue(opts.boundary);
-      ctx.save();
-      ctx.strokeStyle = opts.lineColor;
-      ctx.lineWidth = 1;
-      ctx.setLineDash([4, 4]);
-      ctx.beginPath();
-      ctx.moveTo(chartArea.left, y);
-      ctx.lineTo(chartArea.right, y);
-      ctx.stroke();
-      ctx.restore();
+      const drawDashedLine = (value: number, color: string) => {
+        const y = scales.y.getPixelForValue(value);
+        ctx.save();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(chartArea.left, y);
+        ctx.lineTo(chartArea.right, y);
+        ctx.stroke();
+        ctx.restore();
+      };
+
+      drawDashedLine(opts.boundary, opts.lineColor);
+      if (typeof opts.riskBoundary === 'number' && opts.riskColor) {
+        drawDashedLine(opts.riskBoundary, opts.riskColor);
+      }
     }
   },
 };
@@ -86,7 +94,12 @@ export function LineTrendChart({
   const color = getStatusColor(colors, status);
 
   const referenceValues =
-    reference.kind === 'band' ? [reference.low, reference.high] : [reference.boundary];
+    reference.kind === 'band'
+      ? [reference.low, reference.high]
+      : [
+          reference.boundary,
+          ...(reference.riskBoundary !== undefined ? [reference.riskBoundary] : []),
+        ];
   const allValues = [...values, ...referenceValues];
   const dataMin = Math.min(...allValues);
   const dataMax = Math.max(...allValues);
@@ -174,7 +187,13 @@ export function LineTrendChart({
                 bandColor: colors.successBg,
                 lineColor: colors.success,
               }
-            : { kind: 'line', boundary: reference.boundary, lineColor: colors.foregroundSubtle },
+            : {
+                kind: 'line',
+                boundary: reference.boundary,
+                lineColor: colors.foregroundSubtle,
+                riskBoundary: reference.riskBoundary,
+                riskColor: colors.danger,
+              },
       },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- tickFont는 매 렌더 재생성되는 리터럴이라 deps에서 제외
