@@ -34,5 +34,8 @@ declare module 'chart.js' {
       boundary: number;
       boundaryColor: string;
     };
+    lineReference?:
+      | { kind: 'band'; low: number; high: number; bandColor: string; lineColor: string }
+      | { kind: 'line'; boundary: number; lineColor: string };
   }
 }

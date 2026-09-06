@@ -5,10 +5,10 @@ import type { ChartOptions, Plugin } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import '@/shared/components/charts/chartConfig';
 import { useAnimatedValue } from '@/shared/components/charts/useAnimatedValue';
-import { useChartColors } from '@/shared/components/charts/chartTheme';
+import { getStatusColor, useChartColors, type ChartStatus } from '@/shared/components/charts/chartTheme';
 import { cn } from '@/shared/lib/cn';
 
-export type GaugeRangeStatus = 'normal' | 'warning' | 'danger';
+export type GaugeRangeStatus = ChartStatus;
 export type GaugeRangeSize = 'sm' | 'md' | 'lg';
 
 export interface GaugeRangeChartProps {
@@ -95,8 +95,7 @@ export function GaugeRangeChart({
   className,
 }: GaugeRangeChartProps) {
   const colors = useChartColors();
-  const statusColor =
-    status === 'danger' ? colors.danger : status === 'warning' ? colors.warning : colors.foreground;
+  const statusColor = getStatusColor(colors, status);
   const displayValue = useAnimatedValue(value, min, animate);
 
   // 실제 채움 막대는 gaugeVisuals 플러그인이 직접 그리므로, 여기 dataset은 스케일을 성립시키기 위한 투명한 자리표시자일 뿐이다.
