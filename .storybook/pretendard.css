@@ -1,0 +1,5 @@
+@import 'pretendard/dist/web/variable/pretendardvariable.css';
+
+:root {
+  --font-pretendard: 'Pretendard Variable', sans-serif;
+}
