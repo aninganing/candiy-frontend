@@ -9,9 +9,10 @@ const data = toCheckupData(checkupDataFixture);
 const metrics = toGaugeMetrics(data.overviews[0], data.references);
 
 describe('MetricGaugeGrid', () => {
-  it('각 항목의 라벨과 값을 게이지와 함께 표시한다', () => {
+  it('제목과 각 항목의 라벨·값을 게이지와 함께 표시한다', () => {
     render(<MetricGaugeGrid metrics={metrics} />);
 
+    expect(screen.getByText('주요 수치')).toBeInTheDocument();
     expect(screen.getByText('BMI')).toBeInTheDocument();
     expect(screen.getAllByRole('meter')).toHaveLength(metrics.length);
   });

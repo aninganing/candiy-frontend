@@ -58,8 +58,7 @@ function toShortYearLabel(checkupDate: string): string {
 
 const MAX_TREND_COUNT = 3;
 
-// BMI, 수축기/이완기 혈압 3개 항목만 우선 다룬다. 검진이 2건 미만이면 추이라는 프레임이 성립하지 않아 빈 배열을 반환하고,
-// 너무 오래된 값까지 보이지 않도록 최근 검진 3건까지만 사용한다.
+// BMI, 수축기/이완기 혈압 3개 항목만 우선 다룬다. 검진이 2건 미만이면 추이라는 프레임이 성립하지 않아 빈 배열을 반환하고, 너무 오래된 값까지 보이지 않도록 최근 검진 3건까지만 사용한다.
 export function toTrendMetrics(data: CheckupData): TrendMetric[] {
   const sorted = [...data.overviews]
     .sort((a, b) => a.checkupDate.localeCompare(b.checkupDate))

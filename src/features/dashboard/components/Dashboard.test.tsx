@@ -22,7 +22,7 @@ describe('Dashboard', () => {
   it('캐시에 데이터가 있으면 가장 최근 검진일을 표시한다', () => {
     renderDashboard(true);
 
-    expect(screen.getByText('홍길동님')).toBeInTheDocument();
+    expect(screen.getByText('홍길동님의 최근 검진 결과')).toBeInTheDocument();
     expect(screen.getByText('2024-05-10 검진')).toBeInTheDocument();
     expect(screen.getByText('전체 검진 이력')).toBeInTheDocument();
   });

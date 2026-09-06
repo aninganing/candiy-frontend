@@ -29,4 +29,22 @@ describe('HistoryPanel', () => {
 
     expect(screen.getByText('24.1')).toBeInTheDocument();
   });
+
+  it('제목을 누르면 접히고, 다시 누르면 펼쳐진다', async () => {
+    render(<HistoryPanel overviews={data.overviews} references={data.references} />);
+
+    const toggle = screen.getByRole('button', { name: '전체 검진 이력' });
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getAllByRole('radio')).toHaveLength(2);
+
+    await userEvent.click(toggle);
+
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByRole('radio')).not.toBeInTheDocument();
+
+    await userEvent.click(toggle);
+
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getAllByRole('radio')).toHaveLength(2);
+  });
 });

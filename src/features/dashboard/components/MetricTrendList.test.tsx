@@ -18,9 +18,10 @@ describe('MetricTrendList', () => {
     expect(screen.getByText('이완기 혈압')).toBeInTheDocument();
   });
 
-  it('항목이 없으면 아무것도 렌더링하지 않는다', () => {
-    const { container } = render(<MetricTrendList metrics={[]} />);
+  it('항목이 없으면 제목은 유지하고 안내 문구를 보여준다', () => {
+    render(<MetricTrendList metrics={[]} />);
 
-    expect(container).toBeEmptyDOMElement();
+    expect(screen.getByText('핵심 지표 추이')).toBeInTheDocument();
+    expect(screen.getByText('표시할 추이가 없습니다')).toBeInTheDocument();
   });
 });

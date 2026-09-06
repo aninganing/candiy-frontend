@@ -14,7 +14,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'BMI·수축기 혈압·이완기 혈압의 검진일별 추이를 LineTrendChart로 보여줍니다. 검진이 2건 미만이면 추이라는 프레임이 성립하지 않아 아무것도 렌더링하지 않습니다.',
+          'BMI·수축기 혈압·이완기 혈압의 검진일별 추이를 LineTrendChart로 보여줍니다. 검진이 2건 미만이면 추이라는 프레임이 성립하지 않아 안내 문구를 보여줍니다.',
       },
     },
   },
@@ -35,7 +35,7 @@ export const NotEnoughData: Story = {
   },
   parameters: {
     docs: {
-      description: { story: '검진이 1건뿐이면 아무것도 렌더링하지 않습니다.' },
+      description: { story: '검진이 1건뿐이면 "표시할 추이가 없습니다" 안내를 보여줍니다.' },
     },
   },
 };

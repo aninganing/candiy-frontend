@@ -8,10 +8,8 @@ import { useCheckupData } from '@/features/checkups/hooks/useCheckupData';
 import { toGaugeMetrics } from '@/features/dashboard/mappers/gaugeMetrics.mapper';
 import { toTrendMetrics } from '@/features/dashboard/mappers/trendMetrics.mapper';
 import { toLipidPanel } from '@/features/dashboard/mappers/lipidPanel.mapper';
-import { PatientSummaryCard } from './PatientSummaryCard';
+import { RecentCheckupSummary } from './RecentCheckupSummary';
 import { CheckupRecordList } from './CheckupRecordList';
-import { MetricGaugeGrid } from './MetricGaugeGrid';
-import { MetricTrendList } from './MetricTrendList';
 import { LipidPanelChart } from './LipidPanelChart';
 import { HistoryPanel } from './HistoryPanel';
 import type { CheckupData, CheckupOverview } from '@/features/checkups/types/checkup.types';
@@ -38,10 +36,13 @@ export function Dashboard() {
           <Spinner size="lg" label="검진 결과 불러오는 중" />
         ) : data && latestOverview ? (
           <>
-            <PatientSummaryCard patientName={data.patientName} overview={latestOverview} />
+            <RecentCheckupSummary
+              patientName={data.patientName}
+              overview={latestOverview}
+              gaugeMetrics={toGaugeMetrics(latestOverview, data.references)}
+              trendMetrics={toTrendMetrics(data)}
+            />
             <CheckupRecordList records={data.records} />
-            <MetricGaugeGrid metrics={toGaugeMetrics(latestOverview, data.references)} />
-            <MetricTrendList metrics={toTrendMetrics(data)} />
             <LipidPanelChart data={toLipidPanel(data)} />
             <HistoryPanel overviews={data.overviews} references={data.references} />
           </>

@@ -1,4 +1,3 @@
-import { Card } from '@/shared/components/ui/Card';
 import { GaugeRangeChart } from '@/shared/components/charts/GaugeRangeChart';
 import type { ChartStatus } from '@/shared/components/charts/chartTheme';
 import type { GaugeMetric } from '@/features/dashboard/mappers/gaugeMetrics.mapper';
@@ -24,7 +23,8 @@ export function MetricGaugeGrid({ metrics }: MetricGaugeGridProps) {
   if (metrics.length === 0) return null;
 
   return (
-    <Card padding="lg" className="w-full max-w-lg">
+    <div>
+      <h2 className="text-foreground mb-3 text-sm font-bold">주요 수치</h2>
       <ul className="border-border text-foreground-muted mb-4 flex gap-4 border-b pb-4 text-xs">
         {STATUS_LEGEND.map(({ status, label, dotClassName }) => (
           <li key={status} className="flex items-center gap-1.5">
@@ -33,7 +33,7 @@ export function MetricGaugeGrid({ metrics }: MetricGaugeGridProps) {
           </li>
         ))}
       </ul>
-      <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+      <ul className="flex flex-col gap-5">
         {metrics.map((metric) => (
           <li key={metric.key} className="flex flex-col gap-2">
             <div className="flex items-baseline justify-between">
@@ -55,6 +55,6 @@ export function MetricGaugeGrid({ metrics }: MetricGaugeGridProps) {
           </li>
         ))}
       </ul>
-    </Card>
+    </div>
   );
 }

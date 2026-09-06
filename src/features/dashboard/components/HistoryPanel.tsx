@@ -1,10 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 import { Card } from '@/shared/components/ui/Card';
 import { Badge } from '@/shared/components/ui/Badge';
 import { SelectableChip } from '@/shared/components/ui/SelectableChip';
 import { GaugeRangeChart } from '@/shared/components/charts/GaugeRangeChart';
+import { cn } from '@/shared/lib/cn';
 import {
   toHistorySections,
   type HistoryRow,
@@ -58,6 +60,7 @@ function HistoryRowItem({ row }: { row: HistoryRow }) {
 export function HistoryPanel({ overviews, references }: HistoryPanelProps) {
   const sorted = [...overviews].sort((a, b) => b.checkupDate.localeCompare(a.checkupDate));
   const [selectedDate, setSelectedDate] = useState(sorted[0]?.checkupDate);
+  const [expanded, setExpanded] = useState(true);
   const selectedOverview =
     sorted.find((overview) => overview.checkupDate === selectedDate) ?? sorted[0];
 
@@ -66,37 +69,53 @@ export function HistoryPanel({ overviews, references }: HistoryPanelProps) {
   const sections = toHistorySections(selectedOverview, references);
 
   return (
-    <Card padding="lg" className="w-full max-w-lg">
-      <div className="mb-4 flex flex-col gap-1">
+    <Card padding="lg" className="w-full max-w-3xl">
+      <button
+        type="button"
+        onClick={() => setExpanded((prev) => !prev)}
+        aria-expanded={expanded}
+        className="flex w-full items-center justify-between gap-3 text-left"
+      >
         <h2 className="text-foreground text-sm font-bold">전체 검진 이력</h2>
-        <p className="text-foreground-subtle text-xs">
-          검진일을 선택하면 해당 회차의 전체 항목을 볼 수 있어요
-        </p>
-      </div>
-      <div className="mb-6 flex gap-2 overflow-x-auto">
-        {sorted.map((overview) => (
-          <SelectableChip
-            key={overview.checkupDate}
-            size="sm"
-            selected={overview.checkupDate === selectedOverview.checkupDate}
-            onClick={() => setSelectedDate(overview.checkupDate)}
-          >
-            {overview.checkupDate}
-          </SelectableChip>
-        ))}
-      </div>
-      <div className="flex flex-col gap-6">
-        {sections.map((section) => (
-          <div key={section.title}>
-            <h3 className="text-foreground mb-2 text-sm font-bold">{section.title}</h3>
-            <ul>
-              {section.rows.map((row) => (
-                <HistoryRowItem key={row.label} row={row} />
-              ))}
-            </ul>
+        <ChevronDown
+          aria-hidden="true"
+          className={cn(
+            'text-foreground-muted h-4.5 w-4.5 shrink-0 transition-transform',
+            expanded && 'rotate-180',
+          )}
+        />
+      </button>
+      {expanded && (
+        <>
+          <p className="text-foreground-subtle mt-1 mb-4 text-xs">
+            검진일을 선택하면 해당 회차의 전체 항목을 볼 수 있어요
+          </p>
+          <div className="mb-6 flex gap-2 overflow-x-auto">
+            {sorted.map((overview) => (
+              <SelectableChip
+                key={overview.checkupDate}
+                size="sm"
+                selected={overview.checkupDate === selectedOverview.checkupDate}
+                onClick={() => setSelectedDate(overview.checkupDate)}
+              >
+                {overview.checkupDate}
+              </SelectableChip>
+            ))}
           </div>
-        ))}
-      </div>
+          <div className="flex flex-col gap-6">
+            {sections.map((section) => (
+              <div key={section.title}>
+                <h3 className="text-foreground mb-2 text-sm font-bold">{section.title}</h3>
+                <ul>
+                  {section.rows.map((row) => (
+                    <HistoryRowItem key={row.label} row={row} />
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
     </Card>
   );
 }

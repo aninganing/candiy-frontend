@@ -10,7 +10,7 @@ export function CheckupRecordList({ records }: CheckupRecordListProps) {
   const sorted = [...records].sort((a, b) => b.checkupDate.localeCompare(a.checkupDate));
 
   return (
-    <Card padding="lg" className="w-full max-w-lg">
+    <Card padding="lg" className="w-full max-w-3xl">
       <div className="mb-4 flex items-baseline justify-between">
         <h2 className="text-foreground text-sm font-bold">검진 기록</h2>
         <span className="text-foreground-muted text-xs">총 {records.length}건</span>

@@ -8,7 +8,7 @@ export interface LipidPanelChartProps {
 
 export function LipidPanelChart({ data }: LipidPanelChartProps) {
   return (
-    <Card padding="lg" className="w-full max-w-lg">
+    <Card padding="lg" className="w-full max-w-3xl">
       <div className="mb-4 flex flex-col gap-1">
         <h2 className="text-foreground text-sm font-bold">지질 패널 비교</h2>
         <p className="text-foreground-subtle text-xs">
