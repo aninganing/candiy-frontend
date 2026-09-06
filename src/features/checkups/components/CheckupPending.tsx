@@ -96,7 +96,7 @@ export function CheckupPending({
         >
           {isVerifying ? '확인 중입니다...' : '인증 완료'}
         </Button>
-        <Button variant="ghost" fullWidth onClick={onCancel}>
+        <Button variant="ghost" size="lg" fullWidth onClick={onCancel}>
           취소
         </Button>
       </div>
