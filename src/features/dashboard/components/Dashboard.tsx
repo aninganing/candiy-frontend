@@ -5,7 +5,9 @@ import { Header } from '@/shared/components/layout/Header';
 import { EmptyState } from '@/shared/components/feedback/EmptyState';
 import { Spinner } from '@/shared/components/feedback/Spinner';
 import { useCheckupData } from '@/features/checkups/hooks/useCheckupData';
+import { toGaugeMetrics } from '@/features/dashboard/mappers/gaugeMetrics.mapper';
 import { PatientSummaryCard } from './PatientSummaryCard';
+import { MetricGaugeGrid } from './MetricGaugeGrid';
 import type { CheckupData, CheckupOverview } from '@/features/checkups/types/checkup.types';
 
 function getLatestOverview(data: CheckupData): CheckupOverview | undefined {
@@ -25,11 +27,14 @@ export function Dashboard() {
   return (
     <div className="flex min-h-full flex-1 flex-col">
       <Header title="건강검진 대시보드" />
-      <main className="flex flex-1 flex-col items-center px-6 py-10">
+      <main className="flex flex-1 flex-col items-center gap-6 px-6 py-10">
         {isRestoring ? (
           <Spinner size="lg" label="검진 결과 불러오는 중" />
         ) : data && latestOverview ? (
-          <PatientSummaryCard patientName={data.patientName} overview={latestOverview} />
+          <>
+            <PatientSummaryCard patientName={data.patientName} overview={latestOverview} />
+            <MetricGaugeGrid metrics={toGaugeMetrics(latestOverview, data.references)} />
+          </>
         ) : (
           <EmptyState
             title="아직 조회된 검진 결과가 없습니다"
