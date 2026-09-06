@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
+import { queryKeys } from '@/shared/api/queryKeys';
 import type { CheckupRequestInput } from '@/features/checkups/types/checkup.types';
 import { useInitiateCheckup, useVerifyCheckup } from './useCheckupMutations';
 
@@ -17,14 +18,15 @@ const sampleInput: CheckupRequestInput = {
 
 function createWrapper() {
   const queryClient = new QueryClient();
-  return function Wrapper({ children }: { children: React.ReactNode }) {
-    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
-  };
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+  return { Wrapper, queryClient };
 }
 
 describe('useInitiateCheckup', () => {
   it('1차 요청을 보내고 challenge를 반환한다', async () => {
-    const { result } = renderHook(() => useInitiateCheckup(), { wrapper: createWrapper() });
+    const { result } = renderHook(() => useInitiateCheckup(), { wrapper: createWrapper().Wrapper });
 
     const challenge = await result.current.mutateAsync({ input: sampleInput, id: 'test-id' });
 
@@ -35,11 +37,13 @@ describe('useInitiateCheckup', () => {
 describe('useVerifyCheckup', () => {
   it('첫 시도는 AE-003으로 실패하고, 같은 challenge로 재시도하면 성공한다', async () => {
     const { result: initiate } = renderHook(() => useInitiateCheckup(), {
-      wrapper: createWrapper(),
+      wrapper: createWrapper().Wrapper,
     });
     const challenge = await initiate.current.mutateAsync({ input: sampleInput, id: 'test-id' });
 
-    const { result: verify } = renderHook(() => useVerifyCheckup(), { wrapper: createWrapper() });
+    const { result: verify } = renderHook(() => useVerifyCheckup(), {
+      wrapper: createWrapper().Wrapper,
+    });
 
     await expect(
       verify.current.mutateAsync({ input: sampleInput, id: 'test-id', challenge }),
@@ -48,5 +52,26 @@ describe('useVerifyCheckup', () => {
     const data = await verify.current.mutateAsync({ input: sampleInput, id: 'test-id', challenge });
 
     expect(data.patientName).toBe('홍길동');
+  });
+
+  it('성공하면 결과를 쿼리 캐시(queryKeys.checkups.detail())에 저장한다', async () => {
+    const { result: initiate } = renderHook(() => useInitiateCheckup(), {
+      wrapper: createWrapper().Wrapper,
+    });
+    const challenge = await initiate.current.mutateAsync({ input: sampleInput, id: 'retry-id' });
+
+    const { Wrapper, queryClient } = createWrapper();
+    const { result: verify } = renderHook(() => useVerifyCheckup(), { wrapper: Wrapper });
+
+    await verify.current
+      .mutateAsync({ input: sampleInput, id: 'retry-id', challenge })
+      .catch(() => undefined);
+    const data = await verify.current.mutateAsync({
+      input: sampleInput,
+      id: 'retry-id',
+      challenge,
+    });
+
+    expect(queryClient.getQueryData(queryKeys.checkups.detail())).toEqual(data);
   });
 });

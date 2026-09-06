@@ -1,7 +1,10 @@
 'use client';
 
 import { useCallback } from 'react';
-import { useInitiateCheckup, useVerifyCheckup } from '@/features/checkups/hooks/useCheckupMutations';
+import {
+  useInitiateCheckup,
+  useVerifyCheckup,
+} from '@/features/checkups/hooks/useCheckupMutations';
 import { useCheckupWizardStore } from '@/features/checkups/store/checkupWizard.store';
 import type { CheckupRequestInput } from '@/features/checkups/types/checkup.types';
 
@@ -30,12 +33,12 @@ export function useCheckupWizard() {
   const confirmAuthentication = useCallback(async () => {
     if (state.step !== 'pending') return;
     try {
-      const data = await verify.mutateAsync({
+      await verify.mutateAsync({
         input: state.input,
         id: state.id,
         challenge: state.challenge,
       });
-      setVerified(data);
+      setVerified();
     } catch {
       // verify.error가 UI에 노출되므로 'pending'에 머물러 재시도할 수 있게 둔다.
     }
