@@ -64,7 +64,11 @@ export function CheckupForm({
 
         <div className="flex flex-col gap-2.5">
           <span className="text-foreground text-sm font-semibold">간편인증 수단 선택</span>
-          <div role="radiogroup" aria-label="간편인증 수단 선택" className="grid grid-cols-4 gap-2">
+          <div
+            role="radiogroup"
+            aria-label="간편인증 수단 선택"
+            className="grid grid-cols-3 gap-2 sm:grid-cols-4"
+          >
             {AUTH_METHODS.map((method) => (
               <SelectableChip
                 key={method.level}

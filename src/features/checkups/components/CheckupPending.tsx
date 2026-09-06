@@ -59,7 +59,10 @@ export function CheckupPending({
   return (
     <Card
       padding="lg"
-      className={cn('mx-auto flex flex-col items-center gap-5 text-center', SIZE_WIDTH[size])}
+      className={cn(
+        'mx-auto flex max-w-full flex-col items-center gap-5 text-center',
+        SIZE_WIDTH[size],
+      )}
     >
       <Badge shape="circle" tone="primary" size="lg">
         {CLOCK_ICON}
