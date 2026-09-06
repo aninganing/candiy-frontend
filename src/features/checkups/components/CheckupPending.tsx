@@ -6,11 +6,18 @@ import { Badge } from '@/shared/components/ui/Badge';
 import { Button } from '@/shared/components/ui/Button';
 import { Card } from '@/shared/components/ui/Card';
 import { InlineAlert } from '@/shared/components/ui/InlineAlert';
+import { cn } from '@/shared/lib/cn';
 import { getAuthMethodLabel } from '@/features/checkups/constants/checkupOptions';
 import { AUTH_EXPIRY_SECONDS } from '@/features/checkups/constants/checkupTimings';
 import type { LoginTypeLevel } from '@/features/checkups/types/checkup.types';
 
 const CLOCK_ICON = <Clock />;
+
+const SIZE_WIDTH: Record<'sm' | 'md' | 'lg', string> = {
+  sm: 'w-80',
+  md: 'w-96',
+  lg: 'w-[28rem]',
+};
 
 function formatRemaining(totalSeconds: number) {
   const minutes = Math.floor(totalSeconds / 60);
@@ -25,6 +32,7 @@ export interface CheckupPendingProps {
   onCancel: () => void;
   isVerifying?: boolean;
   errorMessage?: string;
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export function CheckupPending({
@@ -34,6 +42,7 @@ export function CheckupPending({
   onCancel,
   isVerifying = false,
   errorMessage,
+  size = 'md',
 }: CheckupPendingProps) {
   const [remainingSeconds, setRemainingSeconds] = useState(AUTH_EXPIRY_SECONDS);
 
@@ -48,7 +57,10 @@ export function CheckupPending({
   const progressPercent = (remainingSeconds / AUTH_EXPIRY_SECONDS) * 100;
 
   return (
-    <Card padding="lg" className="mx-auto flex max-w-sm flex-col items-center gap-5 text-center">
+    <Card
+      padding="lg"
+      className={cn('mx-auto flex flex-col items-center gap-5 text-center', SIZE_WIDTH[size])}
+    >
       <Badge shape="circle" tone="primary" size="lg">
         {CLOCK_ICON}
       </Badge>

@@ -10,8 +10,14 @@ const meta = {
     docs: {
       description: {
         component:
-          '건강검진 조회 위저드의 인증 대기 화면입니다. 4분 30초 카운트다운을 보여주고, "인증 완료" 버튼을 누르면 onConfirm이 호출됩니다. 실패(AE-003 등)하면 같은 화면에서 warning 배너와 함께 재시도할 수 있습니다.',
+          '건강검진 조회 위저드의 인증 대기 화면입니다. 4분 30초 카운트다운을 보여주고, "인증 완료" 버튼을 누르면 onConfirm이 호출됩니다. 실패(AE-003 등)하면 같은 화면에서 warning 배너와 함께 재시도할 수 있습니다. size로 카드의 고정 너비(sm 320px/md 384px/lg 448px)를 조정합니다.',
       },
+    },
+  },
+  argTypes: {
+    size: {
+      control: 'select',
+      options: ['sm', 'md', 'lg'],
     },
   },
   args: {
@@ -45,4 +51,12 @@ export const RetryWarning: Story = {
       description: { story: '인증을 아직 완료하지 않은 상태로 버튼을 눌렀을 때(AE-003)의 재시도 안내입니다.' },
     },
   },
+};
+
+export const Small: Story = {
+  args: { onConfirm: () => {}, onCancel: () => {}, size: 'sm' },
+};
+
+export const Large: Story = {
+  args: { onConfirm: () => {}, onCancel: () => {}, size: 'lg' },
 };

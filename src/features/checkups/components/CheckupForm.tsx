@@ -15,11 +15,17 @@ import type {
 
 export interface CheckupFormProps {
   onSubmit: (input: CheckupRequestInput) => void;
+  onCancel: () => void;
   isSubmitting?: boolean;
   errorMessage?: string;
 }
 
-export function CheckupForm({ onSubmit, isSubmitting = false, errorMessage }: CheckupFormProps) {
+export function CheckupForm({
+  onSubmit,
+  onCancel,
+  isSubmitting = false,
+  errorMessage,
+}: CheckupFormProps) {
   const [loginTypeLevel, setLoginTypeLevel] = useState<LoginTypeLevel>(1);
   const [legalName, setLegalName] = useState('');
   const [birthdate, setBirthdate] = useState('');
@@ -118,9 +124,21 @@ export function CheckupForm({ onSubmit, isSubmitting = false, errorMessage }: Ch
 
         {errorMessage && <InlineAlert tone="danger">{errorMessage}</InlineAlert>}
 
-        <Button type="submit" size="lg" fullWidth disabled={!isValid || isSubmitting}>
-          {isSubmitting ? '요청 중입니다...' : '본인인증 시작'}
-        </Button>
+        <div className="flex flex-col gap-2.5">
+          <Button type="submit" size="lg" fullWidth disabled={!isValid || isSubmitting}>
+            {isSubmitting ? '요청 중입니다...' : '본인인증 시작'}
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="lg"
+            fullWidth
+            onClick={onCancel}
+            disabled={isSubmitting}
+          >
+            취소
+          </Button>
+        </div>
 
         <p className="text-foreground-subtle text-xs leading-relaxed">
           입력하신 이름, 생년월일, 휴대폰번호 등 개인정보는 본인인증 목적으로만 사용되며 별도로

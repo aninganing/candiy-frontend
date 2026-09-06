@@ -14,6 +14,7 @@ const meta = {
       },
     },
   },
+  args: { onCancel: () => {} },
   render: (args) => (
     <div style={{ maxWidth: 480 }}>
       <CheckupForm {...args} />

@@ -122,4 +122,31 @@ describe('CheckupPending', () => {
 
     expect(screen.getByRole('alert')).toHaveTextContent('아직 인증이 완료되지 않았습니다.');
   });
+
+  it('size 기본값(md)일 때 w-96 클래스가 붙는다', () => {
+    render(
+      <CheckupPending
+        legalName="홍길동"
+        loginTypeLevel={1}
+        onConfirm={vi.fn()}
+        onCancel={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText(/홍길동님의 휴대폰에서/).closest('.mx-auto')).toHaveClass('w-96');
+  });
+
+  it('size가 sm이면 w-80 클래스가 붙는다', () => {
+    render(
+      <CheckupPending
+        legalName="홍길동"
+        loginTypeLevel={1}
+        onConfirm={vi.fn()}
+        onCancel={vi.fn()}
+        size="sm"
+      />,
+    );
+
+    expect(screen.getByText(/홍길동님의 휴대폰에서/).closest('.mx-auto')).toHaveClass('w-80');
+  });
 });
