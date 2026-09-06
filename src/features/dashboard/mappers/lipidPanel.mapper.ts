@@ -1,4 +1,7 @@
-import { parseReferenceBound } from '@/features/checkups/mappers/referenceRange.mapper';
+import {
+  parseNumericValue,
+  parseReferenceBound,
+} from '@/features/checkups/mappers/referenceRange.mapper';
 import type {
   CheckupData,
   CheckupOverview,
@@ -8,6 +11,7 @@ import type {
 export interface LipidPanelSeries {
   label: string;
   values: number[];
+  color: string;
 }
 
 export interface LipidPanelData {
@@ -18,13 +22,15 @@ export interface LipidPanelData {
 interface LipidField {
   key: Extract<keyof CheckupOverview, 'totalCholesterol' | 'ldlCholesterol' | 'triglyceride'>;
   label: string;
+  color: string;
 }
 
 // 위험치가 "X이상" 방향(높을수록 위험)인 지질 항목만 다룬다 — %(=질환의심 기준 대비 비율) 프레임과 방향이 맞기 때문.
+// 색상을 항목에 고정해 둔다 — 일부 항목이 빠져도(값 없음/참고치 파싱 불가) 남은 항목의 색이 매번 같도록.
 const LIPID_FIELDS: LipidField[] = [
-  { key: 'totalCholesterol', label: '총콜레스테롤(%)' },
-  { key: 'ldlCholesterol', label: 'LDL콜레스테롤(%)' },
-  { key: 'triglyceride', label: '중성지방(%)' },
+  { key: 'totalCholesterol', label: '총콜레스테롤(%)', color: '#4f46e5' },
+  { key: 'ldlCholesterol', label: 'LDL콜레스테롤(%)', color: '#0d9488' },
+  { key: 'triglyceride', label: '중성지방(%)', color: '#c026d3' },
 ];
 
 const MAX_COUNT = 3;
@@ -51,11 +57,12 @@ export function toLipidPanel(data: CheckupData): LipidPanelData | null {
     const riskBound = parseReferenceBound(riskReference?.[field.key]);
     if (!riskBound || riskBound.min === undefined) continue;
 
-    const values = sorted.map((overview) => Number(overview[field.key]));
-    if (values.some((value) => Number.isNaN(value))) continue;
+    const parsedValues = sorted.map((overview) => parseNumericValue(overview[field.key]));
+    if (parsedValues.some((value) => value === null)) continue;
+    const values = parsedValues as number[];
 
     const percentValues = values.map((value) => Math.round((value / riskBound.min!) * 1000) / 10);
-    series.push({ label: field.label, values: percentValues });
+    series.push({ label: field.label, values: percentValues, color: field.color });
   }
 
   if (series.length === 0) return null;

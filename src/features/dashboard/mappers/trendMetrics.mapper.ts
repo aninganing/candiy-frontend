@@ -2,6 +2,7 @@ import {
   classifyMetricStatus,
   parseCompoundReferenceBound,
   parseCompoundValue,
+  parseNumericValue,
   parseReferenceBound,
   type ReferenceBound,
 } from '@/features/checkups/mappers/referenceRange.mapper';
@@ -71,8 +72,9 @@ export function toTrendMetrics(data: CheckupData): TrendMetric[] {
 
   const metrics: TrendMetric[] = [];
 
-  const bmiValues = sorted.map((overview) => Number(overview.bmi));
-  if (bmiValues.every((value) => !Number.isNaN(value))) {
+  const parsedBmiValues = sorted.map((overview) => parseNumericValue(overview.bmi));
+  if (parsedBmiValues.every((value) => value !== null)) {
+    const bmiValues = parsedBmiValues as number[];
     const normalBound = parseReferenceBound(normalReference?.bmi);
     const riskBound = parseReferenceBound(riskReference?.bmi);
     const reference = normalBound && toLineReference(normalBound);

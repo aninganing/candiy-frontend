@@ -6,11 +6,7 @@ export interface LipidPanelChartProps {
   data: LipidPanelData | null;
 }
 
-const SERIES_COLORS = ['#4f46e5', '#0d9488', '#c026d3'];
-
 export function LipidPanelChart({ data }: LipidPanelChartProps) {
-  if (!data) return null;
-
   return (
     <Card padding="lg" className="w-full max-w-lg">
       <div className="mb-4 flex flex-col gap-1">
@@ -19,12 +15,18 @@ export function LipidPanelChart({ data }: LipidPanelChartProps) {
           질환의심 기준(100%) 대비 비율 · 최근 3회 검진 기준
         </p>
       </div>
-      <BarComparisonChart
-        categories={data.categories}
-        series={data.series}
-        seriesColors={SERIES_COLORS}
-        thresholdLabel="질환의심 기준"
-      />
+      {data ? (
+        <BarComparisonChart
+          categories={data.categories}
+          series={data.series}
+          seriesColors={data.series.map((series) => series.color)}
+          thresholdLabel="질환의심 기준"
+        />
+      ) : (
+        <p className="text-foreground-subtle py-6 text-center text-sm">
+          지질 패널 비교 값이 없습니다
+        </p>
+      )}
     </Card>
   );
 }

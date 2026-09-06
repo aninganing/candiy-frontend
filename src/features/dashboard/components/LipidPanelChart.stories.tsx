@@ -30,6 +30,19 @@ export const Default: Story = {
 export const NoData: Story = {
   args: { data: null },
   parameters: {
-    docs: { description: { story: '검진 데이터가 없으면 아무것도 렌더링하지 않습니다.' } },
+    docs: {
+      description: { story: '지질 3항목 모두 참고치 파싱이 안 되면 안내 문구를 보여줍니다.' },
+    },
+  },
+};
+
+export const PartialData: Story = {
+  args: { data: data && { ...data, series: data.series.slice(0, 2) } },
+  parameters: {
+    docs: {
+      description: {
+        story: '일부 항목만 파싱 가능할 때도 나머지 항목의 색상을 유지하며 표시합니다.',
+      },
+    },
   },
 };

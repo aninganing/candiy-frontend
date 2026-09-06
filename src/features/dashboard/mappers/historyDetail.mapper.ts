@@ -1,6 +1,7 @@
 import { GAUGE_METRICS, HISTORY_SECTIONS } from '@/config/metrics';
 import {
   classifyMetricStatus,
+  parseNumericValue,
   parseReferenceBound,
   pickGaugeBoundary,
 } from '@/features/checkups/mappers/referenceRange.mapper';
@@ -59,18 +60,17 @@ export function toHistorySections(
       const normalBound = parseReferenceBound(normalRefText);
       const riskBound = parseReferenceBound(getReferenceValue(riskReference, field.key));
 
-      const numericValue = Number(rawValue);
-      const hasNumericValue = rawValue !== '' && !Number.isNaN(numericValue);
+      const numericValue = parseNumericValue(rawValue);
 
       const status: ChartStatus | undefined =
-        normalBound && hasNumericValue
+        normalBound && numericValue !== null
           ? classifyMetricStatus(numericValue, normalBound, riskBound)
           : undefined;
 
       const scale = GAUGE_SCALES.get(field.key);
       const boundary = normalBound ? pickGaugeBoundary(normalBound) : undefined;
       const gauge: HistoryRowGauge | undefined =
-        scale && hasNumericValue && boundary !== undefined
+        scale && numericValue !== null && boundary !== undefined
           ? { value: numericValue, min: scale.min, max: scale.max, boundary }
           : undefined;
 

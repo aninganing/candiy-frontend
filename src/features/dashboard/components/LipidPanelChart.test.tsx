@@ -17,9 +17,19 @@ describe('LipidPanelChart', () => {
     expect(screen.getByText('중성지방(%)')).toBeInTheDocument();
   });
 
-  it('데이터가 없으면 아무것도 렌더링하지 않는다', () => {
-    const { container } = render(<LipidPanelChart data={null} />);
+  it('일부 항목만 있어도 에러 없이 렌더링한다', () => {
+    const partialData = { ...data!, series: data!.series.slice(0, 2) };
 
-    expect(container).toBeEmptyDOMElement();
+    render(<LipidPanelChart data={partialData} />);
+
+    expect(screen.getByText('총콜레스테롤(%)')).toBeInTheDocument();
+    expect(screen.queryByText('중성지방(%)')).not.toBeInTheDocument();
+  });
+
+  it('데이터가 없으면 제목은 유지하고 안내 문구를 보여준다', () => {
+    render(<LipidPanelChart data={null} />);
+
+    expect(screen.getByText('지질 패널 비교')).toBeInTheDocument();
+    expect(screen.getByText('지질 패널 비교 값이 없습니다')).toBeInTheDocument();
   });
 });

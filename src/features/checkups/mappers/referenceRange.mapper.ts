@@ -36,7 +36,9 @@ const CONNECTOR = /\s*(이며|또는)\s*$/;
 
 // 혈압처럼 "수축기/이완기"가 "/"로 묶인 값의 앞/뒤 조각을 분리한다. "120미만 이며/80미만"처럼
 // 조각 사이에 붙는 접속어(이며/또는)는 참고치 파싱 전에 제거한다.
-function splitCompound(text: string): [string, string] | null {
+// API 스펙이 미확정이라 필드 자체가 응답에서 빠질 수 있어(undefined), 빈 값/undefined를 모두 받는다.
+function splitCompound(text: string | null | undefined): [string, string] | null {
+  if (!text) return null;
   const parts = text.split('/');
   if (parts.length !== 2) return null;
   return [parts[0].replace(CONNECTOR, '').trim(), parts[1].replace(CONNECTOR, '').trim()];
@@ -45,18 +47,25 @@ function splitCompound(text: string): [string, string] | null {
 export function parseCompoundReferenceBound(
   text: string | undefined,
 ): [ReferenceBound | null, ReferenceBound | null] {
-  if (!text) return [null, null];
   const parts = splitCompound(text);
   if (!parts) return [null, null];
   return [parseReferenceBound(parts[0]), parseReferenceBound(parts[1])];
 }
 
-export function parseCompoundValue(text: string): [number, number] | null {
+export function parseCompoundValue(text: string | null | undefined): [number, number] | null {
   const parts = splitCompound(text);
   if (!parts) return null;
   const [first, second] = parts.map(Number);
   if (Number.isNaN(first) || Number.isNaN(second)) return null;
   return [first, second];
+}
+
+// 빈 문자열은 Number()가 0으로 취급해 실제 값 0과 구분이 안 되므로 명시적으로 걸러내고,
+// API 스펙이 미확정이라 필드 자체가 응답에서 빠질 수도 있어(undefined) 함께 받는다.
+export function parseNumericValue(text: string | null | undefined): number | null {
+  if (!text || text.trim() === '') return null;
+  const value = Number(text);
+  return Number.isNaN(value) ? null : value;
 }
 
 function isWithinBound(value: number, bound: ReferenceBound): boolean {

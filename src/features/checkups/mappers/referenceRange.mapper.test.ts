@@ -3,9 +3,31 @@ import {
   classifyMetricStatus,
   parseCompoundReferenceBound,
   parseCompoundValue,
+  parseNumericValue,
   parseReferenceBound,
   pickGaugeBoundary,
 } from './referenceRange.mapper';
+
+describe('parseNumericValue', () => {
+  it('숫자 문자열을 숫자로 변환한다', () => {
+    expect(parseNumericValue('23.5')).toBe(23.5);
+    expect(parseNumericValue('0')).toBe(0);
+  });
+
+  it('빈 문자열은 null을 반환한다 — Number("")는 0이라 실제 0과 구분이 안 되기 때문', () => {
+    expect(parseNumericValue('')).toBeNull();
+    expect(parseNumericValue('  ')).toBeNull();
+  });
+
+  it('숫자로 변환할 수 없는 문자열은 null을 반환한다', () => {
+    expect(parseNumericValue('정상')).toBeNull();
+  });
+
+  it('undefined/null이 들어와도(스펙 미확정 API가 필드를 아예 안 줄 수 있음) 에러 없이 null을 반환한다', () => {
+    expect(parseNumericValue(undefined)).toBeNull();
+    expect(parseNumericValue(null)).toBeNull();
+  });
+});
 
 describe('parseReferenceBound', () => {
   it('범위 패턴을 파싱한다', () => {
@@ -50,6 +72,11 @@ describe('parseCompoundValue', () => {
 
   it('숫자로 파싱할 수 없으면 null을 반환한다', () => {
     expect(parseCompoundValue('118')).toBeNull();
+  });
+
+  it('undefined/null이 들어와도 에러 없이 null을 반환한다', () => {
+    expect(parseCompoundValue(undefined)).toBeNull();
+    expect(parseCompoundValue(null)).toBeNull();
   });
 });
 

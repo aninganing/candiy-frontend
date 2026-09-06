@@ -20,4 +20,12 @@ describe('toGaugeMetrics', () => {
     expect(metrics.some((metric) => metric.key === 'bloodPressure')).toBe(false);
     expect(metrics.some((metric) => metric.key === 'hemoglobin')).toBe(false);
   });
+
+  it('값이 빈 문자열이면(측정 안 됨) 0으로 취급하지 않고 결과에서 제외한다', () => {
+    const overview = { ...data.overviews[0], bmi: '' };
+
+    const metrics = toGaugeMetrics(overview, data.references);
+
+    expect(metrics.some((metric) => metric.key === 'bmi')).toBe(false);
+  });
 });

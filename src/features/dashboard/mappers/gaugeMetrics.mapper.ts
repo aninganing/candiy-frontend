@@ -1,6 +1,7 @@
 import { GAUGE_METRICS } from '@/config/metrics';
 import {
   classifyMetricStatus,
+  parseNumericValue,
   parseReferenceBound,
   pickGaugeBoundary,
 } from '@/features/checkups/mappers/referenceRange.mapper';
@@ -30,8 +31,8 @@ export function toGaugeMetrics(
   const riskReference = findReference(references, '질환의심');
 
   return GAUGE_METRICS.reduce<GaugeMetric[]>((metrics, config) => {
-    const value = Number(overview[config.key]);
-    if (Number.isNaN(value)) return metrics;
+    const value = parseNumericValue(overview[config.key]);
+    if (value === null) return metrics;
 
     const normalBound = parseReferenceBound(normalReference?.[config.key]);
     const riskBound = parseReferenceBound(riskReference?.[config.key]);

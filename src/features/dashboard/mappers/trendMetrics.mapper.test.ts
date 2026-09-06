@@ -53,4 +53,13 @@ describe('toTrendMetrics', () => {
     const bmi = metrics.find((metric) => metric.key === 'bmi');
     expect(bmi?.categories).toEqual(["'22", "'23", "'24"]);
   });
+
+  it('BMI 값이 빈 문자열이면(측정 안 됨) 0으로 취급하지 않고 BMI 추이를 제외한다', () => {
+    const data = toCheckupData(checkupDataFixture);
+    const overviews = data.overviews.map((overview) => ({ ...overview, bmi: '' }));
+
+    const metrics = toTrendMetrics({ ...data, overviews });
+
+    expect(metrics.some((metric) => metric.key === 'bmi')).toBe(false);
+  });
 });

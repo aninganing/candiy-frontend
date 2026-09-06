@@ -9,6 +9,7 @@ import { toGaugeMetrics } from '@/features/dashboard/mappers/gaugeMetrics.mapper
 import { toTrendMetrics } from '@/features/dashboard/mappers/trendMetrics.mapper';
 import { toLipidPanel } from '@/features/dashboard/mappers/lipidPanel.mapper';
 import { PatientSummaryCard } from './PatientSummaryCard';
+import { CheckupRecordList } from './CheckupRecordList';
 import { MetricGaugeGrid } from './MetricGaugeGrid';
 import { MetricTrendList } from './MetricTrendList';
 import { LipidPanelChart } from './LipidPanelChart';
@@ -38,6 +39,7 @@ export function Dashboard() {
         ) : data && latestOverview ? (
           <>
             <PatientSummaryCard patientName={data.patientName} overview={latestOverview} />
+            <CheckupRecordList records={data.records} />
             <MetricGaugeGrid metrics={toGaugeMetrics(latestOverview, data.references)} />
             <MetricTrendList metrics={toTrendMetrics(data)} />
             <LipidPanelChart data={toLipidPanel(data)} />
