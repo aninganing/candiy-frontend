@@ -18,10 +18,10 @@ export default function Error({
 
   return (
     <div className="flex min-h-full flex-1 flex-col">
-      <Header title="검진 결과 상세" />
+      <Header title="건강검진 대시보드" />
       <main className="flex flex-1 items-center justify-center px-6 py-10">
         <div className="flex w-full max-w-sm flex-col gap-4">
-          <InlineAlert tone="danger">검진 상세 정보를 불러오는 중 문제가 발생했습니다.</InlineAlert>
+          <InlineAlert tone="danger">대시보드를 불러오는 중 문제가 발생했습니다.</InlineAlert>
           <Button onClick={retry}>다시 시도</Button>
         </div>
       </main>

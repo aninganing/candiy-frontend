@@ -29,7 +29,7 @@ export function useVerifyCheckup() {
       challenge: CheckupChallenge;
     }) => verifyCheckup(input, id, challenge),
     onSuccess: (data) => {
-      queryClient.setQueryData(queryKeys.checkups.detail(), data);
+      queryClient.setQueryData(queryKeys.checkups.data(), data);
     },
   });
 }

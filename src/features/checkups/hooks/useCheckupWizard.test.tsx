@@ -54,7 +54,7 @@ describe('useCheckupWizard', () => {
       await result.current.confirmAuthentication();
     });
     expect(result.current.state).toMatchObject({ step: 'success' });
-    expect(queryClient.getQueryData(queryKeys.checkups.detail())).toMatchObject({
+    expect(queryClient.getQueryData(queryKeys.checkups.data())).toMatchObject({
       patientName: '홍길동',
     });
   });

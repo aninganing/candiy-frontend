@@ -54,7 +54,7 @@ describe('useVerifyCheckup', () => {
     expect(data.patientName).toBe('홍길동');
   });
 
-  it('성공하면 결과를 쿼리 캐시(queryKeys.checkups.detail())에 저장한다', async () => {
+  it('성공하면 결과를 쿼리 캐시(queryKeys.checkups.data())에 저장한다', async () => {
     const { result: initiate } = renderHook(() => useInitiateCheckup(), {
       wrapper: createWrapper().Wrapper,
     });
@@ -72,6 +72,6 @@ describe('useVerifyCheckup', () => {
       challenge,
     });
 
-    expect(queryClient.getQueryData(queryKeys.checkups.detail())).toEqual(data);
+    expect(queryClient.getQueryData(queryKeys.checkups.data())).toEqual(data);
   });
 });
