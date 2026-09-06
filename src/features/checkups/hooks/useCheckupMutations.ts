@@ -1,7 +1,8 @@
 'use client';
 
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { initiateCheckup, verifyCheckup } from '@/features/checkups/api/checkup.api';
+import { queryKeys } from '@/shared/api/queryKeys';
 import type {
   CheckupChallenge,
   CheckupRequestInput,
@@ -15,6 +16,8 @@ export function useInitiateCheckup() {
 }
 
 export function useVerifyCheckup() {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: ({
       input,
@@ -25,5 +28,8 @@ export function useVerifyCheckup() {
       id: string;
       challenge: CheckupChallenge;
     }) => verifyCheckup(input, id, challenge),
+    onSuccess: (data) => {
+      queryClient.setQueryData(queryKeys.checkups.data(), data);
+    },
   });
 }

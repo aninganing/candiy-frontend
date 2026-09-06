@@ -27,10 +27,10 @@ describe('Header', () => {
     expect(screen.getByRole('button', { name: '로그아웃' })).toBeInTheDocument();
   });
 
-  it('actions가 없으면 렌더링하지 않는다', () => {
+  it('actions가 없어도 테마 토글 버튼은 항상 렌더링한다', () => {
     render(<Header />);
 
-    expect(screen.queryByRole('button')).not.toBeInTheDocument();
+    expect(screen.getAllByRole('button')).toHaveLength(1);
   });
 
   it('header 요소로 렌더링된다', () => {

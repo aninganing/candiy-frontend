@@ -56,6 +56,6 @@ describe('CheckupWizard', () => {
 
     await userEvent.click(screen.getByRole('button', { name: '확인' }));
 
-    expect(push).toHaveBeenCalledWith(expect.stringMatching(/^\/checkups\/.+/));
+    expect(push).toHaveBeenCalledWith('/dashboard');
   });
 });

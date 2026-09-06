@@ -1,5 +1,6 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import { cn } from '@/shared/lib/cn';
+import { ThemeToggle } from './ThemeToggle';
 
 export interface HeaderProps extends HTMLAttributes<HTMLElement> {
   title?: string;
@@ -17,7 +18,10 @@ export function Header({ title, actions, className, ...props }: HeaderProps) {
       </span>
       <span className="text-foreground text-[15px] font-extrabold tracking-tight">CANDiY</span>
       {title && <span className="text-foreground-subtle ml-0.5 text-sm">{title}</span>}
-      {actions && <div className="ml-auto flex items-center gap-2">{actions}</div>}
+      <div className="ml-auto flex items-center gap-2">
+        {actions}
+        <ThemeToggle />
+      </div>
     </header>
   );
 }
