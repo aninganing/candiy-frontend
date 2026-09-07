@@ -1,11 +1,12 @@
 import { IsRestoringProvider, QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { toCheckupData } from '@/features/checkups/mappers/checkup.mapper';
 import { checkupDataFixture } from '@/shared/mocks/fixtures/checkup.fixtures';
 import { queryKeys } from '@/shared/api/queryKeys';
 import { useCheckupWizardStore } from '@/features/checkups/store/checkupWizard.store';
+import { useAuthStore } from '@/features/auth/store/auth.store';
 import { Dashboard } from './Dashboard';
 
 const push = vi.fn();
@@ -22,6 +23,7 @@ vi.mock('react-chartjs-2', () => ({
 
 afterEach(() => {
   useCheckupWizardStore.setState({ state: { step: 'idle' } });
+  useAuthStore.setState({ user: null, hasHydrated: false });
   push.mockClear();
 });
 
@@ -79,5 +81,23 @@ describe('Dashboard', () => {
 
     expect(queryClient.getQueryData(queryKeys.checkups.data())).toBeUndefined();
     expect(push).toHaveBeenCalledWith('/checkups');
+  });
+
+  it('로그인한 사용자 이름으로 인사말을 표시한다', () => {
+    useAuthStore.setState({ user: { name: '김안나' }, hasHydrated: true });
+
+    renderDashboard(true);
+
+    expect(screen.getByText('김안나님, 최근 건강검진 결과입니다')).toBeInTheDocument();
+  });
+
+  it('로그아웃을 누르면 로그인 상태를 초기화하고 루트로 이동한다', async () => {
+    useAuthStore.setState({ user: { name: '김안나' }, hasHydrated: true });
+    renderDashboard(true);
+
+    await userEvent.click(screen.getByRole('button', { name: '로그아웃' }));
+
+    expect(useAuthStore.getState().user).toBeNull();
+    await waitFor(() => expect(push).toHaveBeenCalledWith('/'));
   });
 });

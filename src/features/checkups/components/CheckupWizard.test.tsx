@@ -1,8 +1,9 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { useCheckupWizardStore } from '@/features/checkups/store/checkupWizard.store';
+import { useAuthStore } from '@/features/auth/store/auth.store';
 import { CheckupWizard } from './CheckupWizard';
 
 const push = vi.fn();
@@ -12,6 +13,7 @@ vi.mock('next/navigation', () => ({
 
 afterEach(() => {
   useCheckupWizardStore.setState({ state: { step: 'idle' } });
+  useAuthStore.setState({ user: null, hasHydrated: false });
   push.mockClear();
 });
 
@@ -57,5 +59,15 @@ describe('CheckupWizard', () => {
     await userEvent.click(screen.getByRole('button', { name: '확인' }));
 
     expect(push).toHaveBeenCalledWith('/dashboard');
+  });
+
+  it('로그아웃을 누르면 로그인 상태를 초기화하고 루트로 이동한다', async () => {
+    useAuthStore.setState({ user: { name: '홍길동' }, hasHydrated: true });
+    renderWizard();
+
+    await userEvent.click(screen.getByRole('button', { name: '로그아웃' }));
+
+    expect(useAuthStore.getState().user).toBeNull();
+    await waitFor(() => expect(push).toHaveBeenCalledWith('/'));
   });
 });

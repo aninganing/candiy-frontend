@@ -9,7 +9,8 @@ const meta = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: '건강검진 조회 위저드의 첫 화면입니다. "건강검진 조회 시작" 버튼을 누르면 onStart가 호출됩니다.',
+        component:
+          '건강검진 조회 위저드의 첫 화면입니다. "건강검진 조회 시작" 버튼을 누르면 onStart가 호출됩니다.',
       },
     },
   },
@@ -25,4 +26,11 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: { onStart: () => {} },
+};
+
+export const LoggedIn: Story = {
+  args: { onStart: () => {}, userName: '홍길동' },
+  parameters: {
+    docs: { description: { story: '로그인한 사용자에게는 이름이 제목 앞에 붙습니다.' } },
+  },
 };
