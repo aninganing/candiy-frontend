@@ -11,8 +11,8 @@ const pretendard = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'CANDiY 건강검진 대시보드',
-  description: 'CANDiY API 연동 건강검진 결과 조회 및 시각화 대시보드',
+  title: 'CANDiY',
+  description: 'CANDiY 건강검진 결과 조회 및 시각화 대시보드',
 };
 
 // localStorage에 저장된 테마를 hydration 전에 적용해, 실제 값과 다른 기본값으로 그렸다가 페이지 전체 색이 한 번 바뀌는 깜빡임(FOUC)을 막는다.
