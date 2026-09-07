@@ -43,8 +43,9 @@ export function Dashboard() {
             size="md"
             icon={<RotateCcw className="h-4 w-4" />}
             onClick={resetCheckup}
+            aria-label="다시 검사하기"
           >
-            다시 검사하기
+            <span className="hidden sm:inline">다시 검사하기</span>
           </Button>
         }
       />
