@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { Header } from '@/shared/components/layout/Header';
+import { ROUTES } from '@/config/site';
 import { useCheckupData } from '@/features/checkups/hooks/useCheckupData';
 import { useCheckupWizard } from '@/features/checkups/hooks/useCheckupWizard';
 import { CheckupForm } from './CheckupForm';
@@ -60,7 +61,7 @@ export function CheckupWizard() {
           <div className="flex flex-1 items-center justify-center px-6 py-10">
             <CheckupSuccess
               data={data}
-              onConfirm={() => router.push('/dashboard')}
+              onConfirm={() => router.push(ROUTES.dashboard)}
               onReset={reset}
             />
           </div>

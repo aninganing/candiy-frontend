@@ -13,6 +13,13 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({ push }),
 }));
 
+// 실제 Chart.js를 마운트하면 GaugeRangeChart의 애니메이션 프레임이 jsdom의 canvas 미지원과 얽혀
+// 언마운트 타이밍에 따라 불안정해질 수 있다. 이 파일은 차트 자체가 아니라 대시보드 조합을 검증하므로 mock한다.
+vi.mock('react-chartjs-2', () => ({
+  Bar: () => null,
+  Line: () => null,
+}));
+
 afterEach(() => {
   useCheckupWizardStore.setState({ state: { step: 'idle' } });
   push.mockClear();

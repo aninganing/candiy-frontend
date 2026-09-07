@@ -38,4 +38,10 @@ describe('Header', () => {
 
     expect(screen.getByRole('banner')).toBeInTheDocument();
   });
+
+  it('로고를 누르면 홈으로 이동한다', () => {
+    render(<Header />);
+
+    expect(screen.getByRole('link', { name: 'CANDiY' })).toHaveAttribute('href', '/');
+  });
 });

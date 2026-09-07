@@ -1,0 +1,161 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { useEffect } from 'react';
+import { useDarkMode } from 'storybook-dark-mode';
+
+<Meta title="Foundations/Design Tokens" />
+
+export const SyncTheme = () => {
+  const isDark = useDarkMode();
+  useEffect(() => {
+    document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
+  }, [isDark]);
+  return null;
+};
+
+<SyncTheme />
+
+# 디자인 토큰
+
+`src/app/globals.css`의 `@theme`에 정의된 토큰입니다. 컴포넌트에서는 여기 있는 시맨틱 유틸리티 클래스(`bg-primary`, `text-foreground` 등)로만 사용하고, 원시 hex 값은 직접 쓰지 않습니다. 다크모드는 우측 상단 토글로 확인할 수 있습니다(시스템 설정 대신 Storybook의 `data-theme` 속성으로 전환됩니다).
+
+export const Swatch = ({ cssVar, name }) => (
+  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <div
+      style={{
+        width: 44,
+        height: 44,
+        borderRadius: 8,
+        border: '1px solid var(--border)',
+        background: `var(${cssVar})`,
+        flexShrink: 0,
+      }}
+    />
+    <div>
+      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--foreground)' }}>{name}</div>
+      <div style={{ fontSize: 12, color: 'var(--foreground-subtle)' }}>{cssVar}</div>
+    </div>
+  </div>
+);
+
+export const TokenGrid = ({ children }) => (
+  <div
+    style={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+      gap: 16,
+      marginBottom: 32,
+    }}
+  >
+    {children}
+  </div>
+);
+
+## 컬러 — 베이스
+
+앱 배경, 카드, 구분선.
+
+<TokenGrid>
+  <Swatch cssVar="--background" name="background" />
+  <Swatch cssVar="--surface" name="surface" />
+  <Swatch cssVar="--surface-hover" name="surface-hover" />
+  <Swatch cssVar="--border" name="border" />
+  <Swatch cssVar="--border-strong" name="border-strong" />
+</TokenGrid>
+
+## 컬러 — 텍스트
+
+텍스트 위계.
+
+<TokenGrid>
+  <Swatch cssVar="--foreground" name="foreground" />
+  <Swatch cssVar="--foreground-muted" name="foreground-muted" />
+  <Swatch cssVar="--foreground-subtle" name="foreground-subtle" />
+</TokenGrid>
+
+## 컬러 — 브랜드
+
+버튼/링크/포커스 링에 사용하는 블루 계열. 상태색과 겹치지 않게 고정되어 있습니다. `ring`은 별도 색상 없이 `primary`를 그대로 씁니다.
+
+<TokenGrid>
+  <Swatch cssVar="--primary" name="primary" />
+  <Swatch cssVar="--primary-hover" name="primary-hover" />
+  <Swatch cssVar="--primary-foreground" name="primary-foreground" />
+</TokenGrid>
+
+## 컬러 — 상태
+
+건강검진 상태 표현용 3종(success/warning/danger). 각각 `-solid`(차트 라인·아이콘) / `-bg`(뱃지 배경) / `-fg`(뱃지 위 텍스트) / `-foreground`(solid 배경 위 텍스트) 4단계입니다.
+
+<TokenGrid>
+  <Swatch cssVar="--success" name="success" />
+  <Swatch cssVar="--success-bg" name="success-bg" />
+  <Swatch cssVar="--success-fg" name="success-fg" />
+  <Swatch cssVar="--success-foreground" name="success-foreground" />
+  <Swatch cssVar="--warning" name="warning" />
+  <Swatch cssVar="--warning-bg" name="warning-bg" />
+  <Swatch cssVar="--warning-fg" name="warning-fg" />
+  <Swatch cssVar="--warning-foreground" name="warning-foreground" />
+  <Swatch cssVar="--danger" name="danger" />
+  <Swatch cssVar="--danger-bg" name="danger-bg" />
+  <Swatch cssVar="--danger-fg" name="danger-fg" />
+  <Swatch cssVar="--danger-foreground" name="danger-foreground" />
+</TokenGrid>
+
+상태 뱃지는 `-bg`/`-fg`를 짝으로 사용해 대비를 확보합니다.
+
+export const StatusBadge = ({ tone, label }) => (
+  <span
+    style={{
+      background: `var(--${tone}-bg)`,
+      color: `var(--${tone}-fg)`,
+      padding: '4px 10px',
+      borderRadius: 9999,
+      fontSize: 13,
+      fontWeight: 600,
+    }}
+  >
+    {label}
+  </span>
+);
+
+<div style={{ display: 'flex', gap: 8, marginBottom: 32 }}>
+  <StatusBadge tone="success" label="정상" />
+  <StatusBadge tone="warning" label="주의" />
+  <StatusBadge tone="danger" label="위험" />
+</div>
+
+## Radius
+
+컴포넌트 종류별 시맨틱 토큰입니다. `rounded-control`/`rounded-card`/`rounded-badge` 유틸리티로 사용합니다.
+
+export const RadiusSample = ({ radiusClassName, name, usage }) => (
+  <div>
+    <div
+      className={radiusClassName}
+      style={{
+        width: 96,
+        height: 56,
+        background: 'var(--surface)',
+        border: '1px solid var(--border)',
+      }}
+    />
+    <div style={{ fontSize: 12, color: 'var(--foreground-subtle)', marginTop: 6 }}>
+      {name} ({usage})
+    </div>
+  </div>
+);
+
+<div style={{ display: 'flex', gap: 16, marginBottom: 32 }}>
+  <RadiusSample radiusClassName="rounded-control" name="radius-control" usage="버튼/인풋" />
+  <RadiusSample radiusClassName="rounded-card" name="radius-card" usage="카드·패널" />
+  <RadiusSample radiusClassName="rounded-badge" name="radius-badge" usage="상태 뱃지, pill" />
+</div>
+
+## Shadow
+
+카드 elevation용 `shadow-card` 하나만 둡니다. 다크모드에서는 `none`으로 꺼지고 `border`/`border-strong`로 구분을 대신합니다 — 우측 상단에서 다크모드로 전환해 비교해보세요.
+
+<div
+  className="shadow-card"
+  style={{ width: 160, height: 80, borderRadius: 12, background: 'var(--surface)' }}
+/>

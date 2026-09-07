@@ -51,6 +51,7 @@ function HistoryRowItem({ row }: { row: HistoryRow }) {
           {...row.gauge}
           status={row.status ?? 'normal'}
           className="w-full shrink-0"
+          animate
         />
       )}
     </li>
