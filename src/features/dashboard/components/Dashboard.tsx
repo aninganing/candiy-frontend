@@ -1,13 +1,15 @@
 'use client';
 
 import Link from 'next/link';
-import { RotateCcw } from 'lucide-react';
+import { LogOut, RotateCcw } from 'lucide-react';
 import { Header } from '@/shared/components/layout/Header';
 import { EmptyState } from '@/shared/components/feedback/EmptyState';
 import { Spinner } from '@/shared/components/feedback/Spinner';
 import { Button } from '@/shared/components/ui/Button';
 import { useCheckupData } from '@/features/checkups/hooks/useCheckupData';
 import { useResetCheckup } from '@/features/checkups/hooks/useResetCheckup';
+import { useAuthStore } from '@/features/auth/store/auth.store';
+import { useLogout } from '@/features/auth/hooks/useLogout';
 import { toGaugeMetrics } from '@/features/dashboard/mappers/gaugeMetrics.mapper';
 import { toTrendMetrics } from '@/features/dashboard/mappers/trendMetrics.mapper';
 import { toLipidPanel } from '@/features/dashboard/mappers/lipidPanel.mapper';
@@ -32,24 +34,42 @@ export function Dashboard() {
   const { data, isRestoring } = useCheckupData();
   const latestOverview = data ? getLatestOverview(data) : undefined;
   const resetCheckup = useResetCheckup();
+  const user = useAuthStore((state) => state.user);
+  const handleLogout = useLogout();
 
   return (
     <div className="flex min-h-full flex-1 flex-col">
       <Header
         title="건강검진 대시보드"
         actions={
-          <Button
-            variant="ghost-outline"
-            size="md"
-            icon={<RotateCcw className="h-4 w-4" />}
-            onClick={resetCheckup}
-            aria-label="다시 검사하기"
-          >
-            <span className="hidden sm:inline">다시 검사하기</span>
-          </Button>
+          <>
+            <Button
+              variant="ghost-outline"
+              size="md"
+              icon={<RotateCcw className="h-4 w-4" />}
+              onClick={resetCheckup}
+              aria-label="다시 검사하기"
+            >
+              <span className="hidden sm:inline">다시 검사하기</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="md"
+              icon={<LogOut className="h-4 w-4" />}
+              onClick={handleLogout}
+              aria-label="로그아웃"
+            >
+              <span className="hidden sm:inline">로그아웃</span>
+            </Button>
+          </>
         }
       />
       <main className="flex flex-1 flex-col items-center gap-6 px-6 py-10">
+        {user && (
+          <p className="text-foreground w-full max-w-3xl text-lg font-bold">
+            {user.name}님, 10년간의 건강검진 결과를 조회했어요
+          </p>
+        )}
         {isRestoring ? (
           <Spinner size="lg" label="검진 결과 불러오는 중" />
         ) : data && latestOverview ? (

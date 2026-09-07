@@ -1,11 +1,12 @@
 import { IsRestoringProvider, QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { toCheckupData } from '@/features/checkups/mappers/checkup.mapper';
 import { checkupDataFixture } from '@/shared/mocks/fixtures/checkup.fixtures';
 import { queryKeys } from '@/shared/api/queryKeys';
 import { useCheckupWizardStore } from '@/features/checkups/store/checkupWizard.store';
+import { useAuthStore } from '@/features/auth/store/auth.store';
 import { Dashboard } from './Dashboard';
 
 const push = vi.fn();
@@ -13,8 +14,8 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({ push }),
 }));
 
-// 실제 Chart.js를 마운트하면 GaugeRangeChart의 애니메이션 프레임이 jsdom의 canvas 미지원과 얽혀
-// 언마운트 타이밍에 따라 불안정해질 수 있다. 이 파일은 차트 자체가 아니라 대시보드 조합을 검증하므로 mock한다.
+// 실제 Chart.js를 마운트하면 GaugeRangeChart의 애니메이션 프레임이 jsdom의 canvas 미지원과 얽혀 언마운트 타이밍에 따라 불안정해질 수 있다.
+// 이 파일은 차트 자체가 아니라 대시보드 조합을 검증하므로 mock한다.
 vi.mock('react-chartjs-2', () => ({
   Bar: () => null,
   Line: () => null,
@@ -22,6 +23,7 @@ vi.mock('react-chartjs-2', () => ({
 
 afterEach(() => {
   useCheckupWizardStore.setState({ state: { step: 'idle' } });
+  useAuthStore.setState({ user: null, hasHydrated: false });
   push.mockClear();
 });
 
@@ -42,7 +44,7 @@ describe('Dashboard', () => {
   it('캐시에 데이터가 있으면 가장 최근 검진일을 표시한다', () => {
     renderDashboard(true);
 
-    expect(screen.getByText('홍길동님의 최근 검진 결과')).toBeInTheDocument();
+    expect(screen.getByText('홍길동님의 가장 최근 검진 결과')).toBeInTheDocument();
     expect(screen.getByText('2024-05-10 검진')).toBeInTheDocument();
     expect(screen.getByText('전체 검진 이력')).toBeInTheDocument();
   });
@@ -79,5 +81,32 @@ describe('Dashboard', () => {
 
     expect(queryClient.getQueryData(queryKeys.checkups.data())).toBeUndefined();
     expect(push).toHaveBeenCalledWith('/checkups');
+  });
+
+  it('로그인한 사용자 이름으로 인사말을 표시한다', () => {
+    useAuthStore.setState({ user: { name: '김안나' }, hasHydrated: true });
+
+    renderDashboard(true);
+
+    expect(screen.getByText('김안나님, 10년간의 건강검진 결과를 조회했어요')).toBeInTheDocument();
+  });
+
+  it('최근 검진 결과 카드는 로그인 사용자 이름이 아니라 본인인증 당시 이름을 보여준다', () => {
+    useAuthStore.setState({ user: { name: '김안나' }, hasHydrated: true });
+
+    renderDashboard(true);
+
+    expect(screen.getByText('홍길동님의 가장 최근 검진 결과')).toBeInTheDocument();
+    expect(screen.queryByText('김안나님의 가장 최근 검진 결과')).not.toBeInTheDocument();
+  });
+
+  it('로그아웃을 누르면 로그인 상태를 초기화하고 루트로 이동한다', async () => {
+    useAuthStore.setState({ user: { name: '김안나' }, hasHydrated: true });
+    renderDashboard(true);
+
+    await userEvent.click(screen.getByRole('button', { name: '로그아웃' }));
+
+    expect(useAuthStore.getState().user).toBeNull();
+    await waitFor(() => expect(push).toHaveBeenCalledWith('/'));
   });
 });

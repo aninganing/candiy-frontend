@@ -6,6 +6,7 @@ import { Card } from '@/shared/components/ui/Card';
 import { Badge } from '@/shared/components/ui/Badge';
 import { SelectableChip } from '@/shared/components/ui/SelectableChip';
 import { GaugeRangeChart } from '@/shared/components/charts/GaugeRangeChart';
+import { useDragScroll } from '@/shared/hooks/useDragScroll';
 import { cn } from '@/shared/lib/cn';
 import {
   toHistorySections,
@@ -62,6 +63,14 @@ export function HistoryPanel({ overviews, references }: HistoryPanelProps) {
   const sorted = [...overviews].sort((a, b) => b.checkupDate.localeCompare(a.checkupDate));
   const [selectedDate, setSelectedDate] = useState(sorted[0]?.checkupDate);
   const [expanded, setExpanded] = useState(true);
+  const {
+    ref: dragScrollRef,
+    onPointerDown,
+    onPointerMove,
+    onPointerUp,
+    onPointerCancel,
+    onClickCapture,
+  } = useDragScroll<HTMLDivElement>();
   const selectedOverview =
     sorted.find((overview) => overview.checkupDate === selectedDate) ?? sorted[0];
 
@@ -91,7 +100,15 @@ export function HistoryPanel({ overviews, references }: HistoryPanelProps) {
           <p className="text-foreground-subtle mt-1 mb-4 text-xs">
             검진일을 선택하면 해당 회차의 전체 항목을 볼 수 있어요
           </p>
-          <div className="mb-6 flex gap-2 overflow-x-auto">
+          <div
+            ref={dragScrollRef}
+            className="mb-6 flex cursor-grab gap-2 overflow-x-auto select-none active:cursor-grabbing"
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
+            onPointerCancel={onPointerCancel}
+            onClickCapture={onClickCapture}
+          >
             {sorted.map((overview) => (
               <SelectableChip
                 key={overview.checkupDate}

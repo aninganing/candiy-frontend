@@ -8,6 +8,7 @@ export interface CheckupSuccessProps {
   data: CheckupData;
   onConfirm: () => void;
   onReset: () => void;
+  userName?: string;
 }
 
 export function getLatestCheckupDate(data: CheckupData): string {
@@ -16,7 +17,7 @@ export function getLatestCheckupDate(data: CheckupData): string {
   return [...dates].sort().at(-1) ?? '-';
 }
 
-export function CheckupSuccess({ data, onConfirm, onReset }: CheckupSuccessProps) {
+export function CheckupSuccess({ data, onConfirm, onReset, userName }: CheckupSuccessProps) {
   return (
     <Card padding="lg" className="mx-auto flex max-w-sm flex-col items-center gap-5 text-center">
       <Badge shape="circle" tone="success" size="lg">
@@ -24,8 +25,8 @@ export function CheckupSuccess({ data, onConfirm, onReset }: CheckupSuccessProps
       </Badge>
 
       <div className="flex flex-col gap-2">
-        <h1 className="text-foreground text-lg font-bold tracking-tight">
-          {data.patientName}님의 건강검진 조회가
+        <h1 className="text-foreground text-base font-bold tracking-tight sm:text-lg">
+          {userName ?? data.patientName}님의 건강검진 조회가
           <br />
           완료되었습니다
         </h1>
@@ -37,11 +38,15 @@ export function CheckupSuccess({ data, onConfirm, onReset }: CheckupSuccessProps
       <div className="grid w-full grid-cols-2 gap-2.5">
         <div className="rounded-control border-border flex flex-col gap-1 border p-4">
           <span className="text-foreground-subtle text-xs">조회된 검진</span>
-          <span className="text-foreground text-lg font-bold">{data.records.length}건</span>
+          <span className="text-foreground text-base font-bold sm:text-lg">
+            {data.records.length}건
+          </span>
         </div>
         <div className="rounded-control border-border flex flex-col gap-1 border p-4">
           <span className="text-foreground-subtle text-xs">최근 검진일</span>
-          <span className="text-foreground text-lg font-bold">{getLatestCheckupDate(data)}</span>
+          <span className="text-foreground text-base font-bold sm:text-lg">
+            {getLatestCheckupDate(data)}
+          </span>
         </div>
       </div>
 
