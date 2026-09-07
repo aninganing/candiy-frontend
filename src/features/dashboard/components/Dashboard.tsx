@@ -11,6 +11,7 @@ import { useResetCheckup } from '@/features/checkups/hooks/useResetCheckup';
 import { toGaugeMetrics } from '@/features/dashboard/mappers/gaugeMetrics.mapper';
 import { toTrendMetrics } from '@/features/dashboard/mappers/trendMetrics.mapper';
 import { toLipidPanel } from '@/features/dashboard/mappers/lipidPanel.mapper';
+import { ROUTES } from '@/config/site';
 import { RecentCheckupSummary } from './RecentCheckupSummary';
 import { CheckupRecordList } from './CheckupRecordList';
 import { LipidPanelChart } from './LipidPanelChart';
@@ -22,7 +23,7 @@ function getLatestOverview(data: CheckupData): CheckupOverview | undefined {
 }
 
 const START_CHECKUP_LINK = (
-  <Link href="/checkups" className="text-primary text-sm font-semibold hover:underline">
+  <Link href={ROUTES.checkups} className="text-primary text-sm font-semibold hover:underline">
     건강검진 조회하기
   </Link>
 );

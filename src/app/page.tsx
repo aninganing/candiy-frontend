@@ -1,6 +1,7 @@
 import { LineChart } from 'lucide-react';
 import { Header } from '@/shared/components/layout/Header';
 import { LinkButton } from '@/shared/components/ui/LinkButton';
+import { ROUTES } from '@/config/site';
 
 export default function Home() {
   return (
@@ -21,7 +22,7 @@ export default function Home() {
           </p>
         </div>
         <div className="flex w-full max-w-sm flex-col gap-2.5 pt-2">
-          <LinkButton href="/checkups" size="lg" fullWidth>
+          <LinkButton href={ROUTES.checkups} size="lg" fullWidth>
             시작하기
           </LinkButton>
         </div>

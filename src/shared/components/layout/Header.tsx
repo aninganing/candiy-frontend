@@ -1,6 +1,7 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import Link from 'next/link';
 import { cn } from '@/shared/lib/cn';
+import { ROUTES } from '@/config/site';
 import { ThemeToggle } from './ThemeToggle';
 
 export interface HeaderProps extends HTMLAttributes<HTMLElement> {
@@ -14,7 +15,7 @@ export function Header({ title, actions, className, ...props }: HeaderProps) {
       className={cn('border-border flex items-center gap-2 border-b px-8 py-5', className)}
       {...props}
     >
-      <Link href="/" className="flex items-center gap-2">
+      <Link href={ROUTES.home} className="flex items-center gap-2">
         <span className="text-xl leading-none" aria-hidden="true">
           🍬
         </span>
