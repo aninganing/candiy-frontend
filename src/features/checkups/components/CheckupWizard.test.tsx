@@ -61,6 +61,26 @@ describe('CheckupWizard', () => {
     expect(push).toHaveBeenCalledWith('/dashboard');
   });
 
+  it('본인인증 대기 화면은 폼에 입력한 이름이 아니라 로그인한 사용자 이름을 보여준다', async () => {
+    useAuthStore.setState({ user: { name: '김안나' }, hasHydrated: true });
+    renderWizard();
+
+    await userEvent.click(screen.getByRole('button', { name: '건강검진 조회 시작' }));
+    await userEvent.type(screen.getByLabelText('이름'), '홍길동');
+    await userEvent.type(screen.getByLabelText('생년월일'), '19900101');
+    await userEvent.type(screen.getByLabelText('휴대폰번호'), '01012345678');
+    await userEvent.click(screen.getByRole('button', { name: '본인인증 시작' }));
+
+    expect(await screen.findByText(/김안나님의 휴대폰에서/)).toBeInTheDocument();
+    expect(screen.queryByText(/홍길동님의 휴대폰에서/)).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: '인증 완료' }));
+    await userEvent.click(screen.getByRole('button', { name: '인증 완료' }));
+
+    expect(await screen.findByText(/김안나님의 건강검진 조회가/)).toBeInTheDocument();
+    expect(screen.queryByText(/홍길동님의 건강검진 조회가/)).not.toBeInTheDocument();
+  });
+
   it('로그아웃을 누르면 로그인 상태를 초기화하고 루트로 이동한다', async () => {
     useAuthStore.setState({ user: { name: '홍길동' }, hasHydrated: true });
     renderWizard();

@@ -8,6 +8,7 @@ export interface CheckupSuccessProps {
   data: CheckupData;
   onConfirm: () => void;
   onReset: () => void;
+  userName?: string;
 }
 
 export function getLatestCheckupDate(data: CheckupData): string {
@@ -16,7 +17,7 @@ export function getLatestCheckupDate(data: CheckupData): string {
   return [...dates].sort().at(-1) ?? '-';
 }
 
-export function CheckupSuccess({ data, onConfirm, onReset }: CheckupSuccessProps) {
+export function CheckupSuccess({ data, onConfirm, onReset, userName }: CheckupSuccessProps) {
   return (
     <Card padding="lg" className="mx-auto flex max-w-sm flex-col items-center gap-5 text-center">
       <Badge shape="circle" tone="success" size="lg">
@@ -25,7 +26,7 @@ export function CheckupSuccess({ data, onConfirm, onReset }: CheckupSuccessProps
 
       <div className="flex flex-col gap-2">
         <h1 className="text-foreground text-lg font-bold tracking-tight">
-          {data.patientName}님의 건강검진 조회가
+          {userName ?? data.patientName}님의 건강검진 조회가
           <br />
           완료되었습니다
         </h1>

@@ -59,7 +59,7 @@ export function CheckupWizard() {
         {state.step === 'pending' && (
           <div className="flex flex-1 items-center justify-center px-6 py-10">
             <CheckupPending
-              legalName={state.input.legalName}
+              legalName={userName ?? state.input.legalName}
               loginTypeLevel={state.input.loginTypeLevel}
               onConfirm={confirmAuthentication}
               onCancel={reset}
@@ -73,6 +73,7 @@ export function CheckupWizard() {
           <div className="flex flex-1 items-center justify-center px-6 py-10">
             <CheckupSuccess
               data={data}
+              userName={userName}
               onConfirm={() => router.push(ROUTES.dashboard)}
               onReset={reset}
             />

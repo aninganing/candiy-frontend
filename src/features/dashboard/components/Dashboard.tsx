@@ -61,7 +61,7 @@ export function Dashboard() {
       <main className="flex flex-1 flex-col items-center gap-6 px-6 py-10">
         {user && (
           <p className="text-foreground w-full max-w-3xl text-lg font-bold">
-            {user.name}님, 최근 건강검진 결과입니다
+            {user.name}님, 10년간의 건강검진 결과를 조회했어요
           </p>
         )}
         {isRestoring ? (
