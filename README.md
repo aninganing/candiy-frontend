@@ -2,16 +2,20 @@
 
 CANDiY NHIS API를 연동해 국민건강보험 건강검진 결과를 조회하고 시각화합니다.
 
+- **웹 🖥️**: https://candiy-frontend.vercel.app/
+- **스토리북 📖**: https://candiy-frontend-storybook.vercel.app/
+
 ## 프로젝트 개요
 
-사용자가 이름/생년월일/휴대폰번호와 간편인증 수단을 입력하면 CANDiY의 2단계(1차 요청 → 간편인증 → 2차 요청) 본인인증 플로우를 거쳐 최근 10년간의 건강검진 이력을 조회합니다. 조회가 완료되면 `/dashboard`에서 최근 검진 결과 요약, 검진 항목별 게이지·추이, 지질 패널 비교, 검진 기록, 검진일별 전체 항목을 확인할 수 있습니다.
+로그인(`/login`, 현재는 mock)한 사용자가 이름/생년월일/휴대폰번호와 간편인증 수단을 입력하면 CANDiY의 2단계(1차 요청 → 간편인증 → 2차 요청) 본인인증 플로우를 거쳐 최근 10년간의 건강검진 이력을 조회합니다. 조회가 완료되면 `/dashboard`에서 최근 검진 결과 요약, 검진 항목별 게이지·추이, 지질 패널 비교, 검진 기록, 검진일별 전체 항목을 확인할 수 있습니다.
 
 ## 기술 스택 (선택 이유)
 
 - **Next.js App Router + TypeScript(strict)** — 서버 프록시(Route Handler)와 클라이언트 화면을 한 프로젝트에서 관리하기 위해. `app/`은 라우팅만 담당하고 로직은 `features/`에 응집시킵니다.
 - **Tailwind CSS v4** — `@theme`의 CSS-first 설정으로 디자인 토큰(컬러/라디우스/쉐도우)을 정의하고, 다크모드를 `prefers-color-scheme` 기반으로 전환합니다.
 - **Chart.js + react-chartjs-2** — 게이지(`GaugeRangeChart`)·추이(`LineTrendChart`)·항목 비교(`BarComparisonChart`) 차트를 커스텀 플러그인으로 구현합니다. 차트 컴포넌트는 `useQuery`/Zustand를 모르는 순수 프레젠테이셔널 컴포넌트입니다.
-- **TanStack Query + Zustand** — 서버에서 오는 데이터(검진 조회 결과)는 TanStack Query로, 서버가 소유하지 않는 클라이언트 상태(위저드 진행 단계)는 Zustand로 분리해 캐시 이원화를 방지합니다. 검진 결과 쿼리는 `@tanstack/react-query-persist-client`로 `sessionStorage`에 저장해 새로고침/뒤로가기에도 유지되고, 탭을 닫으면 사라집니다.
+- **TanStack Query + Zustand** — 서버에서 오는 데이터(검진 조회 결과)는 TanStack Query로, 서버가 소유하지 않는 클라이언트 상태(위저드 진행 단계, 로그인 세션)는 Zustand로 분리해 캐시 이원화를 방지합니다. 검진 결과 쿼리는 `@tanstack/react-query-persist-client`로 `sessionStorage`에 저장해 새로고침/뒤로가기에도 유지되고, 탭을 닫으면 사라집니다. 로그인 세션(`auth.store.ts`)은 `zustand/middleware`의 `persist`로 `localStorage`에 저장해 탭을 닫아도 유지됩니다.
+- **react-hook-form + zod** — 로그인 폼(`LoginForm`)과 건강검진 조회 폼(`CheckupForm`)의 검증 스키마를 zod로 선언하고 `@hookform/resolvers`로 react-hook-form에 연결합니다. 검증 규칙과 폼 상태 관리를 분리해 스키마만 보고도 어떤 값이 유효한지 알 수 있게 했습니다.
 - **axios** — `shared/api/client.ts`(브라우저용)와 `shared/api/candiyServerClient.ts`(서버 전용, API 키 주입)를 분리해 API 키가 브라우저에 노출되지 않도록 합니다.
 - **MSW(Mock Service Worker)** — mock 레이어로 전체 플로우를 데모 가능하게 만들고 실 스펙으로 DTO/mapper만 교체하도록 설계했습니다.
 - **Vitest + React Testing Library / Storybook** — 도메인 로직(mapper, 훅)은 Vitest로, 프레젠테이셔널 컴포넌트는 Storybook으로 독립 검증합니다.
@@ -73,16 +77,24 @@ pnpm dev
 ```
 src/
   app/                        # 라우팅/레이아웃 조립만 (로직 없음)
-    page.tsx                  # 홈(화면 구현 예정 — /checkups로의 진입 안내만)
+    page.tsx                  # 홈 — 서비스 소개 + "시작하기"(/checkups) 진입점
+    login/page.tsx            # 로그인 화면(GuestOnly로 감싸 로그인 상태면 /checkups로 리다이렉트)
     layout.tsx, providers.tsx # 전역 레이아웃, TanStack Query(+sessionStorage persist)/MockProvider 등록
-    checkups/page.tsx         # 건강검진 조회 위저드 화면
-    dashboard/                # 대시보드 화면 (page/loading/error)
+    checkups/page.tsx         # 건강검진 조회 위저드 화면(AuthGuard로 감싸 비로그인 시 /login으로 리다이렉트)
+    dashboard/                # 대시보드 화면 (page/loading/error, page는 AuthGuard로 보호)
     api/checkups/route.ts     # 서버 프록시 Route Handler
   features/
+    auth/
+      types/                  # 도메인 타입 (auth.types.ts — AuthUser)
+      schemas/                # 로그인 폼 zod 스키마 (login.schema.ts)
+      store/                  # Zustand 로그인 세션 상태(localStorage persist)
+      hooks/                  # useRequireAuth/useRedirectIfAuthenticated(라우트 가드 판정), useLogout
+      components/             # LoginForm, AuthGuard(보호 라우트), GuestOnly(비로그인 전용 라우트)
     checkups/
       api/                    # DTO 정의 + axios 호출 (checkup.dto.ts, checkup.api.ts)
       mappers/                # DTO → 도메인 타입 변환(checkup.mapper.ts), 참고치 문자열 파싱(referenceRange.mapper.ts)
       types/                  # 도메인 타입 (checkup.types.ts)
+      schemas/                # 조회 폼 zod 스키마 (checkupForm.schema.ts)
       constants/              # 간편인증 수단/통신사 옵션, 인증 만료 시간
       hooks/                  # TanStack Query 훅(useCheckupData) + 위저드 오케스트레이션 훅
       store/                  # Zustand 위저드 상태
@@ -92,14 +104,16 @@ src/
       components/             # RecentCheckupSummary, CheckupRecordList, LipidPanelChart, HistoryPanel, Dashboard
   shared/
     api/                      # client.ts(브라우저 axios), candiyServerClient.ts(서버 전용), queryClient.ts/queryKeys.ts(TanStack Query persist 설정)
-    mocks/                    # MSW handler/fixture, MockProvider
+    mocks/                    # MSW handler/fixture, MockProvider (건강검진 조회 API만 — 로그인은 순수 클라이언트라 mock 서버가 없음)
+    hooks/                    # useDragScroll 등 도메인에 속하지 않는 공용 훅
     components/
-      ui/                     # Button, Card, Input, Badge, SelectableChip, InlineAlert
+      ui/                     # Button, LinkButton, Card, Input, Badge, SelectableChip, InlineAlert
       layout/                 # Header
       feedback/               # Spinner, EmptyState
       charts/                 # GaugeRangeChart, LineTrendChart, BarComparisonChart, ChartTooltip (순수 프레젠테이셔널)
     lib/                      # cn(), env 등 공통 유틸
   config/
+    site.ts                   # ROUTES 상수 — 화면 추가/삭제는 여기서
     metrics.ts                # 게이지로 보여줄 항목(GAUGE_METRICS)과 전체 이력 섹션 구성(HISTORY_SECTIONS)
 ```
 
@@ -109,7 +123,22 @@ src/
 
 브라우저는 CANDiY API를 직접 호출하지 않고 Next.js Route Handler(`app/api/checkups/route.ts`)를 거칩니다. Route Handler는 서버 전용 `candiyServerClient`로 API 키를 주입해 실제(또는 mock) CANDiY API에 요청합니다 — API 키가 브라우저 번들에 포함되지 않습니다.
 
+로그인(`features/auth`)은 이 계층을 거치지 않습니다. CANDiY API에는 앱 사용자 로그인이라는 개념 자체가 없어서(실제 "인증"은 위 건강검진 본인인증 플로우입니다), 로그인은 처음부터 순수 클라이언트 로직으로 구현했습니다. 자세한 동작은 아래 "로그인" 절을 참고하세요.
+
 ## 주요 기능 / 화면
+
+### 로그인 (`/login`) — 현재 mock 구현
+
+`/checkups`, `/dashboard`는 로그인해야 접근할 수 있습니다(`AuthGuard`가 비로그인 상태를 감지하면 `/login`으로 리다이렉트). 반대로 이미 로그인한 상태로 `/login`에 접근하면 `GuestOnly`가 `/checkups`로 돌려보냅니다.
+
+**지금 동작 방식(전부 mock)**: 실제 계정 시스템이 없습니다. 이름은 아무 값이나 입력하면 되고, 비밀번호는 실제 자격 증명이 아니라 **형식만**(영문+숫자 조합 8자 이상, `login.schema.ts`) zod로 검증합니다. 형식만 맞으면 입력한 이름 그대로 로그인 처리되어 `AuthUser { name }`이 Zustand 스토어(`auth.store.ts`, `persist`로 `localStorage`에 저장)에 저장됩니다. 로그인한 이름은 건강검진 위저드의 본인인증 대기/완료 화면과 대시보드 인사말에 그대로 쓰입니다(단, 검진 결과 자체에 찍히는 환자명은 CANDiY 응답의 `patientName`이라 로그인 이름과 별개입니다). 로그아웃(`useLogout`)은 세션을 지우는 것과 함께 캐시된 검진 데이터·위저드 진행 단계도 함께 초기화해, 다음 로그인 때 이전 사용자의 조회 결과가 그대로 보이는 걸 막습니다.
+
+**실제 백엔드로 교체하려면**: 이 기능은 CANDiY API를 거치지 않는 순수 클라이언트 구현이라, 다른 feature처럼 DTO/mapper만 바꿔서 될 일이 아니라 로그인 API 자체를 새로 붙여야 합니다.
+
+1. `features/auth/api/auth.api.ts`(신규) + DTO를 만들어 `shared/api/client.ts`의 `apiPost`로 실제 로그인 엔드포인트를 호출합니다.
+2. `LoginForm.tsx`의 제출 핸들러가 `useAuthStore.getState().login(name)`을 직접 부르는 대신, 위 API 호출 결과(발급된 사용자 정보/토큰)로 로그인하도록 바꿉니다. 필요하면 `AuthUser`에 `id`/토큰 필드를 추가합니다.
+3. `login.schema.ts`의 비밀번호 검증은 그대로 두거나(형식 검증은 실제 서비스에서도 유효) 서버 응답의 인증 실패(잘못된 비밀번호 등)를 폼에 에러로 표시하는 로직을 `CheckupForm`의 `errorMessage` 패턴처럼 추가합니다.
+4. `AuthGuard`/`GuestOnly`/`useLogout`/`useRequireAuth`는 `useAuthStore`의 `user`/`hasHydrated`만 바라보므로 그대로 재사용할 수 있습니다.
 
 ### 건강검진 조회 위저드 (`/checkups`)
 
@@ -152,14 +181,30 @@ CANDiY NHIS 문서의 2단계 인증 플로우를 그대로 구현했습니다.
 ```bash
 pnpm test          # Vitest 전체 실행 (mapper, 훅, 컴포넌트)
 pnpm test:watch    # watch 모드
-pnpm storybook     # Storybook 개발 서버 — shared/components/{ui,charts,feedback}, features/{checkups,dashboard}/components 프레젠테이션 확인
+pnpm storybook     # Storybook 개발 서버 — shared/components/{ui,charts,feedback}, features/{auth,checkups,dashboard}/components 프레젠테이션 확인
 ```
 
-테스트(`*.test.ts(x)`)와 스토리(`*.stories.tsx`)는 각 소스 파일 옆에 colocate되어 있습니다.
+테스트(`*.test.ts(x)`)와 스토리(`*.stories.tsx`)는 각 소스 파일 옆에 colocate되어 있습니다. Vitest + React Testing Library(jsdom)로 계층별로 다른 패턴을 씁니다.
+
+`// given` / `// when` / `// then` 같은 주석은 달지 않습니다. `it('~하면 ~한다')` 설명 문장에 이미 그 내용이 들어있고, 테스트 코드도 arrange(렌더) → act(조작) → assert(검증) 순서라 어디가 어디인지 바로 보이기 때문입니다.
+
+- **순수 함수 (mapper, zod 스키마)**: 입력→출력만 검증하는 단순 단위 테스트. 예) `checkup.mapper.test.ts`, `referenceRange.mapper.test.ts`, `login.schema.ts`/`checkupForm.schema.ts`의 `*.schema.test.ts`(`safeParse` 성공/실패 케이스).
+- **Zustand 스토어**: 컴포넌트 없이 `useXxxStore.setState()`/`.getState()`로 직접 상태를 주입·검증합니다. `persist` 미들웨어를 쓰는 스토어(`auth.store.ts`)도 동일하게 다루되, 각 테스트의 `afterEach`에서 스토어 상태를 초기값으로 리셋합니다(모듈이 테스트 파일 간에 공유되는 싱글턴이기 때문).
+- **react-hook-form + zod 폼(`LoginForm`, `CheckupForm`)**: `mode: 'onChange'`로 입력마다 비동기 검증이 돌기 때문에, 렌더 직후의 `isValid`/에러 상태를 확인할 때는 `waitFor`로 감싸야 flaky해지지 않습니다(react-hook-form의 잘 알려진 타이밍 이슈). `userEvent.type`으로 입력 후 `await waitFor(() => expect(button).toBeEnabled())` 형태가 기본 패턴입니다.
+- **TanStack Query를 쓰는 컴포넌트/훅(`useCheckupData`, `Dashboard`, `CheckupWizard` 등)**: 매 테스트마다 새 `QueryClient`를 만들어 `QueryClientProvider`로 감싸고, 필요하면 `queryClient.setQueryData(queryKeys.checkups.data(), ...)`로 캐시를 미리 채워 렌더합니다. sessionStorage 복원 중 상태는 `IsRestoringProvider value={true}`로 시뮬레이션합니다.
+- **API 함수/Route Handler(`checkup.api.ts`, `app/api/checkups/route.ts`)**: MSW(`shared/mocks/server.ts`)로 실제 HTTP 왕복을 가로채 검증합니다. 로그인은 서버 왕복이 없는 순수 클라이언트 로직이라 MSW를 쓰지 않습니다.
+- **Chart.js를 렌더하는 조합 테스트(`Dashboard.test.tsx` 등)**: jsdom은 canvas 2D 컨텍스트를 지원하지 않아 실제 Chart.js를 마운트하면 애니메이션 타이밍에 따라 불안정해질 수 있습니다. 차트 자체가 아니라 화면 조합을 검증하는 테스트는 `vi.mock('react-chartjs-2', () => ({ Bar: () => null, Line: () => null }))`로 목업합니다(차트 컴포넌트 자체의 props 매핑 테스트는 목업하지 않고 실제로 마운트해 검증).
+- **`next/navigation`을 쓰는 컴포넌트**: `vi.mock('next/navigation', () => ({ useRouter: () => ({ push, replace }) }))`로 라우터를 목업하고 `push`/`replace` 호출 여부·인자를 검증합니다.
 
 ## 배포
 
 Vercel로 배포합니다.
 
+- **앱**: https://candiy-frontend.vercel.app/
+- **Storybook**: https://candiy-frontend-storybook.vercel.app/ (같은 저장소를 가리키는 별도 Vercel 프로젝트 — `pnpm build-storybook` / `storybook-static`)
 - **Preview**: `NEXT_PUBLIC_API_MODE=mock` 유지 — API 키 없이 전체 플로우를 데모할 수 있습니다.
 - **Production**: CANDiY 실제 스펙 연동 후 `NEXT_PUBLIC_API_MODE=live`로 전환하고 `CANDIY_API_KEY`/`CANDIY_API_BASE_URL`을 Vercel 환경 변수에 설정합니다.
+
+## 알려진 제한사항
+
+- **로그인이 전부 mock입니다.** 실제 계정 시스템이 없고, 비밀번호는 형식만 검증할 뿐 신원을 확인하지 않습니다. 로그인 사용자 이름과 CANDiY 응답의 검진 대상자 이름(`patientName`)은 서로 무관합니다. 실제 연동 방법은 위 "로그인" 절 참고.
