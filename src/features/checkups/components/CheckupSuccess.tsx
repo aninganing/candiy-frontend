@@ -38,11 +38,15 @@ export function CheckupSuccess({ data, onConfirm, onReset, userName }: CheckupSu
       <div className="grid w-full grid-cols-2 gap-2.5">
         <div className="rounded-control border-border flex flex-col gap-1 border p-4">
           <span className="text-foreground-subtle text-xs">조회된 검진</span>
-          <span className="text-foreground text-lg font-bold">{data.records.length}건</span>
+          <span className="text-foreground text-base font-bold sm:text-lg">
+            {data.records.length}건
+          </span>
         </div>
         <div className="rounded-control border-border flex flex-col gap-1 border p-4">
           <span className="text-foreground-subtle text-xs">최근 검진일</span>
-          <span className="text-foreground text-lg font-bold">{getLatestCheckupDate(data)}</span>
+          <span className="text-foreground text-base font-bold sm:text-lg">
+            {getLatestCheckupDate(data)}
+          </span>
         </div>
       </div>
 
