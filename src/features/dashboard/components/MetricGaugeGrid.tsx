@@ -51,6 +51,7 @@ export function MetricGaugeGrid({ metrics }: MetricGaugeGridProps) {
               max={metric.max}
               boundary={metric.boundary}
               status={metric.status}
+              animate
             />
           </li>
         ))}
