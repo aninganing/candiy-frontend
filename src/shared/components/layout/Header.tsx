@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from 'react';
+import Link from 'next/link';
 import { cn } from '@/shared/lib/cn';
 import { ThemeToggle } from './ThemeToggle';
 
@@ -13,10 +14,12 @@ export function Header({ title, actions, className, ...props }: HeaderProps) {
       className={cn('border-border flex items-center gap-2 border-b px-8 py-5', className)}
       {...props}
     >
-      <span className="text-xl leading-none" aria-hidden="true">
-        🍬
-      </span>
-      <span className="text-foreground text-[15px] font-extrabold tracking-tight">CANDiY</span>
+      <Link href="/" className="flex items-center gap-2">
+        <span className="text-xl leading-none" aria-hidden="true">
+          🍬
+        </span>
+        <span className="text-foreground text-[15px] font-extrabold tracking-tight">CANDiY</span>
+      </Link>
       {title && <span className="text-foreground-subtle ml-0.5 text-sm">{title}</span>}
       <div className="ml-auto flex items-center gap-2">
         {actions}
