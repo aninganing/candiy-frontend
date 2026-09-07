@@ -32,6 +32,9 @@ const preview: Preview = {
     backgrounds: {
       disable: true,
     },
+    nextjs: {
+      appDirectory: true,
+    },
     darkMode: {
       current: 'light',
     },

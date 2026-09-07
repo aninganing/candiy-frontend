@@ -21,6 +21,15 @@ describe('CheckupSuccess', () => {
     expect(screen.getByText(/홍길동님의 건강검진 조회가/)).toBeInTheDocument();
   });
 
+  it('userName이 있으면 data.patientName 대신 그 이름을 표시한다', () => {
+    render(
+      <CheckupSuccess data={sampleData} userName="김안나" onConfirm={vi.fn()} onReset={vi.fn()} />,
+    );
+
+    expect(screen.getByText(/김안나님의 건강검진 조회가/)).toBeInTheDocument();
+    expect(screen.queryByText(/홍길동님의 건강검진 조회가/)).not.toBeInTheDocument();
+  });
+
   it('조회된 검진 건수를 표시한다', () => {
     render(<CheckupSuccess data={sampleData} onConfirm={vi.fn()} onReset={vi.fn()} />);
 

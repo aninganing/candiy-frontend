@@ -69,7 +69,7 @@ export function CheckupPending({
       </Badge>
 
       <div className="flex flex-col gap-2">
-        <h1 className="text-foreground text-lg font-bold tracking-tight">
+        <h1 className="text-foreground text-base font-bold tracking-tight sm:text-lg">
           {legalName}님의 휴대폰에서
           <br />
           {methodLabel} 인증을 진행해주세요

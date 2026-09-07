@@ -3,9 +3,10 @@ import { Button } from '@/shared/components/ui/Button';
 
 export interface CheckupIntroProps {
   onStart: () => void;
+  userName?: string;
 }
 
-export function CheckupIntro({ onStart }: CheckupIntroProps) {
+export function CheckupIntro({ onStart, userName }: CheckupIntroProps) {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-6 px-6 py-10 text-center">
       <div className="bg-primary/10 flex h-18 w-18 items-center justify-center rounded-full">
@@ -13,7 +14,7 @@ export function CheckupIntro({ onStart }: CheckupIntroProps) {
       </div>
       <div className="flex flex-col gap-2.5">
         <h1 className="text-foreground text-xl font-bold tracking-tight">
-          국민건강보험공단 건강검진 결과 조회
+          {userName && `${userName}님의 `}국민건강보험공단 건강검진 결과 조회
         </h1>
         <p className="text-foreground-muted text-sm leading-relaxed">
           본인인증을 통해 최근의 건강검진 결과를 한 번에 확인하세요.

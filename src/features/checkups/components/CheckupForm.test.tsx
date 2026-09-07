@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { CheckupForm } from './CheckupForm';
@@ -10,10 +10,12 @@ async function fillValidForm() {
 }
 
 describe('CheckupForm', () => {
-  it('필수 항목을 채우지 않으면 제출 버튼이 비활성화된다', () => {
+  it('필수 항목을 채우지 않으면 제출 버튼이 비활성화된다', async () => {
     render(<CheckupForm onSubmit={vi.fn()} onCancel={vi.fn()} />);
 
-    expect(screen.getByRole('button', { name: '본인인증 시작' })).toBeDisabled();
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: '본인인증 시작' })).toBeDisabled(),
+    );
   });
 
   it('필수 항목을 모두 채우면 제출 버튼이 활성화된다', async () => {
@@ -21,7 +23,9 @@ describe('CheckupForm', () => {
 
     await fillValidForm();
 
-    expect(screen.getByRole('button', { name: '본인인증 시작' })).toBeEnabled();
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: '본인인증 시작' })).toBeEnabled(),
+    );
   });
 
   it('제출 시 입력값과 기본 조회기간을 담아 onSubmit을 호출한다', async () => {
@@ -29,16 +33,21 @@ describe('CheckupForm', () => {
     render(<CheckupForm onSubmit={onSubmit} onCancel={vi.fn()} />);
 
     await fillValidForm();
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: '본인인증 시작' })).toBeEnabled(),
+    );
     await userEvent.click(screen.getByRole('button', { name: '본인인증 시작' }));
 
-    expect(onSubmit).toHaveBeenCalledWith(
-      expect.objectContaining({
-        legalName: '홍길동',
-        birthdate: '19900101',
-        phoneNo: '01012345678',
-        telecom: 0,
-        loginTypeLevel: 1,
-      }),
+    await waitFor(() =>
+      expect(onSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          legalName: '홍길동',
+          birthdate: '19900101',
+          phoneNo: '01012345678',
+          telecom: 0,
+          loginTypeLevel: 1,
+        }),
+      ),
     );
     const [submitted] = onSubmit.mock.calls[0] as [{ startDate: string; endDate: string }];
     // "최근 10년간" 안내 문구(CheckupSuccess)와 맞춘 범위 — 올해 포함 10년.
@@ -52,17 +61,24 @@ describe('CheckupForm', () => {
     await userEvent.click(screen.getByRole('radio', { name: '토스' }));
     await userEvent.click(screen.getByRole('radio', { name: 'KT' }));
     await fillValidForm();
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: '본인인증 시작' })).toBeEnabled(),
+    );
     await userEvent.click(screen.getByRole('button', { name: '본인인증 시작' }));
 
-    expect(onSubmit).toHaveBeenCalledWith(
-      expect.objectContaining({ loginTypeLevel: 8, telecom: 1 }),
+    await waitFor(() =>
+      expect(onSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({ loginTypeLevel: 8, telecom: 1 }),
+      ),
     );
   });
 
-  it('isSubmitting이면 제출 버튼이 비활성화되고 문구가 바뀐다', () => {
+  it('isSubmitting이면 제출 버튼이 비활성화되고 문구가 바뀐다', async () => {
     render(<CheckupForm onSubmit={vi.fn()} onCancel={vi.fn()} isSubmitting />);
 
-    expect(screen.getByRole('button', { name: '요청 중입니다...' })).toBeDisabled();
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: '요청 중입니다...' })).toBeDisabled(),
+    );
   });
 
   it('errorMessage가 있으면 에러 배너를 표시한다', () => {
