@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { LogOut } from 'lucide-react';
 import { Header } from '@/shared/components/layout/Header';
 import { Button } from '@/shared/components/ui/Button';
 import { ROUTES } from '@/config/site';
@@ -35,8 +36,14 @@ export function CheckupWizard() {
       <Header
         title="건강검진 조회"
         actions={
-          <Button variant="ghost" size="md" onClick={handleLogout}>
-            로그아웃
+          <Button
+            variant="ghost"
+            size="md"
+            icon={<LogOut className="h-4 w-4" />}
+            onClick={handleLogout}
+            aria-label="로그아웃"
+          >
+            <span className="hidden sm:inline">로그아웃</span>
           </Button>
         }
       />

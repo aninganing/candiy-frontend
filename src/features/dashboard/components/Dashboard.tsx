@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { RotateCcw } from 'lucide-react';
+import { LogOut, RotateCcw } from 'lucide-react';
 import { Header } from '@/shared/components/layout/Header';
 import { EmptyState } from '@/shared/components/feedback/EmptyState';
 import { Spinner } from '@/shared/components/feedback/Spinner';
@@ -52,8 +52,14 @@ export function Dashboard() {
             >
               <span className="hidden sm:inline">다시 검사하기</span>
             </Button>
-            <Button variant="ghost" size="md" onClick={handleLogout}>
-              로그아웃
+            <Button
+              variant="ghost"
+              size="md"
+              icon={<LogOut className="h-4 w-4" />}
+              onClick={handleLogout}
+              aria-label="로그아웃"
+            >
+              <span className="hidden sm:inline">로그아웃</span>
             </Button>
           </>
         }

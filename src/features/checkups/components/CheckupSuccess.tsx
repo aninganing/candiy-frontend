@@ -25,7 +25,7 @@ export function CheckupSuccess({ data, onConfirm, onReset, userName }: CheckupSu
       </Badge>
 
       <div className="flex flex-col gap-2">
-        <h1 className="text-foreground text-lg font-bold tracking-tight">
+        <h1 className="text-foreground text-base font-bold tracking-tight sm:text-lg">
           {userName ?? data.patientName}님의 건강검진 조회가
           <br />
           완료되었습니다
